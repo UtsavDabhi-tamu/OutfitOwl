@@ -3,7 +3,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  return <div className="text-xl">Home Page</div>;
+  return (
+    <div className="bg-slate">
+      <h1 className="text-center text-3xl py-4">Home Page</h1>
+    </div>
+  );
 }
 
 // export default function Home() {
