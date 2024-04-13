@@ -18,46 +18,44 @@ export default function RootLayout({
   return (
     <>
       <html lang="en">
-        <body className="container">
-          {/* Navbar */}
-          <div className="h-14">
-            <nav className="fixed inset-x-0 bg-white shadow dark:bg-gray-950">
-              <div className="container">
-                <div className="flex h-14 items-center">
-                  <Link
-                    className="mr-auto flex items-center gap-2 text-lg font-semibold"
-                    href="/"
-                  >
-                    <OwlIcon />
-                    <span>Outfit Owl</span>
-                  </Link>
-                  <nav className="ml-auto flex items-center space-x-4">
+        <body className="bg-zinc-100">
+          <div className="container">
+            {/* Navbar */}
+            <div className="h-16">
+              <nav className="fixed inset-x-0 bg-white shadow dark:bg-gray-950">
+                <div className="container">
+                  <div className="flex h-16 items-center">
                     <Link
-                      className="font-medium text-sm border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
-                      href="/"
-                    >
-                      Home
+                      className="mr-auto flex items-center gap-2 text-2xl font-semibold"
+                      href="/">
+                      <OwlIcon />
+                      <span>Outfit Owl</span>
                     </Link>
-                    <Link
-                      className="font-medium text-sm border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
-                      href="/prefrences"
-                    >
-                      Prefrences
-                    </Link>
-                    <Link
-                      className="font-medium text-sm border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
-                      href="/wardrobe"
-                    >
-                      Wardrobe
-                    </Link>
-                  </nav>
+                    <nav className="ml-auto flex items-center space-x-6">
+                      <Link
+                        className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
+                        href="/">
+                        Home
+                      </Link>
+                      <Link
+                        className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
+                        href="/preferences">
+                        Preferences
+                      </Link>
+                      <Link
+                        className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
+                        href="/wardrobe">
+                        Wardrobe
+                      </Link>
+                    </nav>
+                  </div>
                 </div>
-              </div>
-            </nav>
-          </div>
+              </nav>
+            </div>
 
-          {/* Main Content */}
-          <main className="">{children}</main>
+            {/* Main Content */}
+            <main className="">{children}</main>
+          </div>
         </body>
       </html>
     </>
