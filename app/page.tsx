@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -23,7 +21,7 @@ export default function Home() {
   const [zipCode, setZipCode] = useState("");
   const [specialPlans, setSpecialPlans] = useState("");
 
-  const [value, setValue] = useState("");
+  const [selectedProfile, setSelectedProfile] = useState("");
 
   const [isOuterLayer, setIsOuterLayer] = useState(true);
 
@@ -31,7 +29,7 @@ export default function Home() {
     console.log("Generating outfit with the following details:");
     console.log("Zip Code:", zipCode);
     console.log("Special Plans:", specialPlans);
-    console.log("val:", value);
+    console.log("Profile:", selectedProfile);
     setIsOuterLayer(!isOuterLayer);
   };
 
@@ -43,7 +41,7 @@ export default function Home() {
             <div className="w-full">
               {/* Dropdown Upper right*/}
               <div className="flex justify-end mb-4">
-                <Select onValueChange={(value) => setValue(value)}>
+                <Select onValueChange={(value) => setSelectedProfile(value)}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select Profile" />
                   </SelectTrigger>
@@ -52,12 +50,7 @@ export default function Home() {
                       <SelectItem
                         value={profile}
                         onSelect={() => {
-                          console.log(
-                            "Profile before setting state: ",
-                            profile
-                          );
-                          setValue(profile);
-                          console.log("State after setting: ", value);
+                          setSelectedProfile(profile);
                         }}>
                         {profile}
                       </SelectItem>
