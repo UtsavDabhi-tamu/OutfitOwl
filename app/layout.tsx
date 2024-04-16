@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import Image from "next/image";
 import OwlIcon from "@/components/OwlIcon";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,9 +27,14 @@ export default function RootLayout({
                 <div className="container">
                   <div className="flex h-16 items-center">
                     <Link
-                      className="mr-auto flex items-center gap-2 text-2xl font-semibold"
+                      className="mr-auto flex items-center text-2xl font-semibold"
                       href="/">
-                      <OwlIcon />
+                      <Image
+                        src="/outfitOwlLogo.png"
+                        alt="Outfit Owl Logo"
+                        width={50}
+                        height={50}
+                      />
                       <span>Outfit Owl</span>
                     </Link>
                     <nav className="ml-auto flex items-center space-x-6">
