@@ -2,7 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
-import OwlIcon from "@/components/OwlIcon";
+import { ProfileProvider } from "../context/profileContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,9 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <ProfileProvider>
       <html lang="en">
-        <body className="bg-zinc-100">
+        <body className="bg-zinc-200">
           <div className="container">
             {/* Navbar */}
             <div className="h-16">
@@ -28,7 +28,8 @@ export default function RootLayout({
                   <div className="flex h-16 items-center">
                     <Link
                       className="mr-auto flex items-center text-2xl font-semibold"
-                      href="/">
+                      href="/"
+                    >
                       <Image
                         src="/outfitOwlLogo.png"
                         alt="Outfit Owl Logo"
@@ -40,17 +41,20 @@ export default function RootLayout({
                     <nav className="ml-auto flex items-center space-x-6">
                       <Link
                         className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
-                        href="/">
+                        href="/"
+                      >
                         Home
                       </Link>
                       <Link
                         className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
-                        href="/preferences">
+                        href="/preferences"
+                      >
                         Preferences
                       </Link>
                       <Link
                         className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
-                        href="/wardrobe">
+                        href="/wardrobe"
+                      >
                         Wardrobe
                       </Link>
                     </nav>
@@ -64,6 +68,6 @@ export default function RootLayout({
           </div>
         </body>
       </html>
-    </>
+    </ProfileProvider>
   );
 }
