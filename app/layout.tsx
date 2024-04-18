@@ -2,7 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
-import { ProfileProvider } from "../context/profileContext";
+import { ProfileProvider } from "../contexts/profileContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,34 +25,34 @@ export default function RootLayout({
             <div className="h-16">
               <nav className="fixed inset-x-0 bg-white shadow dark:bg-gray-950">
                 <div className="container">
-                  <div className="flex h-16 items-center">
+                  <div className="flex items-center h-16">
                     <Link
-                      className="mr-auto flex items-center text-2xl font-semibold"
+                      className="flex items-center mr-auto text-2xl font-semibold"
                       href="/"
                     >
                       <Image
-                        src="/outfitOwlLogo.png"
+                        src="/images/outfitOwlLogo.png"
                         alt="Outfit Owl Logo"
                         width={50}
                         height={50}
                       />
                       <span>Outfit Owl</span>
                     </Link>
-                    <nav className="ml-auto flex items-center space-x-6">
+                    <nav className="flex items-center ml-auto space-x-6">
                       <Link
-                        className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
+                        className="text-xl font-medium transition-colors border-b-2 border-transparent hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
                         href="/"
                       >
                         Home
                       </Link>
                       <Link
-                        className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
+                        className="text-xl font-medium transition-colors border-b-2 border-transparent hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
                         href="/preferences"
                       >
                         Preferences
                       </Link>
                       <Link
-                        className="font-medium text-xl border-b-2 border-transparent transition-colors hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
+                        className="text-xl font-medium transition-colors border-b-2 border-transparent hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
                         href="/wardrobe"
                       >
                         Wardrobe

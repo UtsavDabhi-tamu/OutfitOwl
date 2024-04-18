@@ -8,7 +8,7 @@ import { useState } from "react";
 
 import * as React from "react";
 import ProfileSelector from "@/components/profile-selector";
-import { useProfile } from "@/context/profileContext";
+import { useProfile } from "@/contexts/profileContext";
 
 export default function Home() {
   const [zipCode, setZipCode] = useState("");
@@ -29,9 +29,9 @@ export default function Home() {
 
   return (
     <div className="flex w-full h-[550px] bg-white shadow-lg rounded-lg my-6">
-      <div className="w-3/5">
+      <div className="w-7/12">
         <div className="container h-full p-4">
-          <div className="flex items-center w-full h-full p-20 mb-4">
+          <div className="flex items-center w-full h-full p-12 mb-4">
             <div className="w-full">
               {/* Dropdown Upper right*/}
               <div className="flex justify-end mb-4">
@@ -83,8 +83,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <Separator orientation="vertical" />
-      <div className="w-2/5">
+      <Separator orientation="vertical" className="my-auto h-5/6" />
+      <div className="w-5/12">
         <div className="container flex items-center justify-center h-full p-4">
           {isOuterLayer ? (
             <div className="grid h-full grid-cols-2 gap-4">

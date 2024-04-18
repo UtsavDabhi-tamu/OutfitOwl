@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useProfile } from "../context/profileContext";
+import { useProfile } from "../contexts/profileContext";
 
 const ProfileSelector = () => {
   const { selectedProfile, setSelectedProfile, profiles, setProfiles } = useProfile();

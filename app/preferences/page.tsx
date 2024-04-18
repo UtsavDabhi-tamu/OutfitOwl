@@ -14,7 +14,7 @@ import {
 
 import ProfileSelector from "@/components/profile-selector";
 import AddProfilePopover from "@/components/add-profile-popover";
-import { useProfile } from "@/context/profileContext";
+import { useProfile } from "@/contexts/profileContext";
 
 export default function Preferences() {
   const { selectedProfile, setSelectedProfile, profiles, setProfiles } =

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { useProfile } from "../context/profileContext";
+import { useProfile } from "../contexts/profileContext";
 import { useState } from "react";
 
 const AddProfilePopover = () => {
@@ -57,7 +57,7 @@ const AddProfilePopover = () => {
                   onChange={(e) => setProfileName(e.target.value)}
                 />
               </div>
-              <div className="grid items-center grid-cols-3 gap-4">
+              <div className="grid items-center h-full grid-cols-3 gap-4">
                 <Label htmlFor="clothType">Clothing Type</Label>
                 <Select
                   onValueChange={(value) => setClothingType(value)}
