@@ -94,7 +94,8 @@ export default function Wardrobe() {
   };
 
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col justify-center min-h-screen">
+      {/* Header */}
       <div className="w-1/2 py-12 mx-auto space-y-4">
         <h1 className="text-xl font-semibold">Your Wardrobe</h1>
         <p className="">
@@ -103,6 +104,7 @@ export default function Wardrobe() {
         </p>
       </div>
 
+      {/* Image Grid */}
       <div className="grid w-full grid-cols-4 gap-4 mx-auto justify-items-center xl:grid-cols-5">
         {currentImages.map((index) => (
           <div key={index} className="w-[200px] h-[200px] relative">
@@ -116,7 +118,12 @@ export default function Wardrobe() {
           </div>
         ))}
       </div>
-      <div className="fixed inset-x-0 bottom-0 py-4 border-black border-t-1 bg-zinc-200">
+
+      {/* Spacer */}
+      <div className="h-[72px]"> </div>
+
+      {/* Pagination */}
+      <div className="fixed inset-x-0 bottom-0 py-4 bg-zinc-200">
         <Pagination>
           <PaginationContent>{paginationItems()}</PaginationContent>
         </Pagination>

@@ -116,6 +116,7 @@ export default function Preferences() {
 
   return (
     <div className="flex flex-col justify-center">
+      {/* Header */}
       <div className="w-1/2 py-12 mx-auto space-y-4">
         <h1 className="text-xl font-semibold">How it Works</h1>
         <p className="">
@@ -125,6 +126,7 @@ export default function Preferences() {
         </p>
       </div>
 
+      {/* Image Grid */}
       <div className="grid grid-cols-4 gap-4 mx-auto justify-items-center xl:grid-cols-5">
         <div className="flex justify-end w-full col-span-4 gap-4 mb-4 xl:col-span-5">
           <ProfileSelector />
@@ -161,7 +163,11 @@ export default function Preferences() {
         ))}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 py-4 border-black border-t-1 bg-zinc-200">
+      {/* Spacer */}
+      <div className="h-[72px]"> </div>
+
+      {/* Pagination */}
+      <div className="fixed inset-x-0 bottom-0 py-4 bg-zinc-200">
         <Pagination>
           <PaginationContent>{paginationItems()}</PaginationContent>
         </Pagination>
