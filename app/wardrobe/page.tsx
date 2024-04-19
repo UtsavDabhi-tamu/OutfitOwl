@@ -107,13 +107,20 @@ export default function Wardrobe() {
       {/* Image Grid */}
       <div className="grid w-full grid-cols-4 gap-4 mx-auto justify-items-center xl:grid-cols-5">
         {currentImages.map((index) => (
-          <div key={index} className="w-[200px] h-[200px] relative">
+          <div
+            key={index}
+            className="w-[200px] h-[200px] relative rounded-md shadow-sm bg-white flex items-center overflow-hidden"
+          >
             <Image
               src={imagePath + `${index}.jpg`}
               alt={`Loaded Image ${index}`}
-              fill={true}
+              width={200}
+              height={200}
               object-fit="contain"
-              className="rounded-md shadow-sm bg-white z-[-1]"
+              className="max-w-[200px] max-h-[200px] mx-auto"
+              style={{
+                width: "auto",
+              }}
             />
           </div>
         ))}
