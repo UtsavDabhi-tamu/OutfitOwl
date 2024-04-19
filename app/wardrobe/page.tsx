@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -14,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 
 export default function Wardrobe() {
+  const imagePath = "/images/wardrobe/";
   const totalImages = 1007; // Total number of images, from 0.jpg to 1006.jpg
   const [currentPage, setCurrentPage] = useState(1);
   const imagesPerPage = 20;
@@ -107,7 +107,7 @@ export default function Wardrobe() {
         {currentImages.map((index) => (
           <div key={index} className="w-[200px] h-[200px] relative">
             <Image
-              src={`/images/wardrobe/${index}.jpg`}
+              src={imagePath + `${index}.jpg`}
               alt={`Loaded Image ${index}`}
               fill={true}
               object-fit="contain"
