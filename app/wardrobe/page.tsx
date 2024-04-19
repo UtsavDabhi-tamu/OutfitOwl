@@ -103,7 +103,7 @@ export default function Wardrobe() {
         </p>
       </div>
 
-      <div className="grid w-full grid-cols-4 gap-4 mx-auto mt-4 justify-items-center xl:grid-cols-5">
+      <div className="grid w-full grid-cols-4 gap-4 mx-auto justify-items-center xl:grid-cols-5">
         {currentImages.map((index) => (
           <div key={index} className="w-[200px] h-[200px] relative">
             <Image
@@ -116,10 +116,11 @@ export default function Wardrobe() {
           </div>
         ))}
       </div>
-
-      <Pagination className="my-8">
-        <PaginationContent>{paginationItems()}</PaginationContent>
-      </Pagination>
+      <div className="fixed inset-x-0 bottom-0 py-4 border-black border-t-1 bg-zinc-200">
+        <Pagination>
+          <PaginationContent>{paginationItems()}</PaginationContent>
+        </Pagination>
+      </div>
     </div>
   );
 }

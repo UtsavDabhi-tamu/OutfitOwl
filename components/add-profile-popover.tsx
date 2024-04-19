@@ -34,7 +34,7 @@ const AddProfilePopover = () => {
   };
 
   return (
-    <div className="flex justify-end mb-4">
+    <div className="flex justify-end">
       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
         <PopoverTrigger asChild>
           <Button>Add New Profile</Button>
