@@ -24,7 +24,24 @@ export default function Home() {
     console.log("Zip Code:", zipCode);
     console.log("Special Plans:", specialPlans);
     console.log("Profile:", selectedProfile);
-    setIsOuterLayer(!isOuterLayer);
+
+    fetch('http://127.0.0.1:5328/api/get_data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        zipcode: zipCode,
+        plans: specialPlans
+      })
+    }).then(response => response.json())
+      .then(data => {
+        console.log(data)
+        setIsOuterLayer(!isOuterLayer);
+      })
+      .catch(err => {
+        console.log(err)
+      });
   };
 
   return (

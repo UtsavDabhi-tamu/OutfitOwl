@@ -47,6 +47,25 @@ export default function Preferences() {
     });
   };
 
+  const sendPreferences = () => {
+    console.log(likedImages.map((value, idx) => value ? idx: -1).filter(idx => idx != -1))
+    fetch('http://127.0.0.1:5328/api/store_preferences', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        outfit_ids: likedImages.map((value, idx) => value ? idx: -1).filter(idx => idx != -1)
+      })
+    }).then(response => response.json())
+      .then(data => {
+        console.log(data)
+      })
+      .catch(err => {
+        console.log(err)
+      });
+  }
+
   const paginationItems = () => {
     let items = [];
 
@@ -130,7 +149,8 @@ export default function Preferences() {
       <div className="grid grid-cols-4 gap-4 mx-auto justify-items-center xl:grid-cols-5">
         <div className="flex justify-end w-full col-span-4 gap-4 mb-4 xl:col-span-5">
           <ProfileSelector />
-          <AddProfilePopover />
+          <Button onClick={() => sendPreferences()}>Submit</Button>
+          {/* <AddProfilePopover /> */}
         </div>
 
         {currentImages.map((index) => (

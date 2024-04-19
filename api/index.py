@@ -1,8 +1,23 @@
-from flask import Flask, request
+from flask import Flask, jsonify, request
 import requests
-import sys
+from flask_cors import CORS
+import json
 
 app = Flask(__name__)
+
+# Allow cross-origin requests
+CORS(app)
+
+
+@app.route('/api/store_preferences', methods=['POST'])
+def user_preferences():
+    outfit_ids = request.json.get('outfit_ids')
+    train_user_model(outfit_ids)
+
+    return jsonify({'outfit_ids': outfit_ids})
+
+def train_user_model(outfit_ids):
+    pass
 
 @app.route('/api/get_data', methods=['POST'])
 def get_data():
@@ -14,6 +29,8 @@ def get_data():
     plans = data['plans']
 
     response = query_gpt(weather_data, plans)
+
+    return jsonify(weather_data)
 
 
 # METHOD TO GET WEATHER DATA
@@ -63,3 +80,4 @@ def query_openweather(zipcode):
 # METHOD TO GET RECOMMENDATIONS FROM GPT
 def query_gpt(weather_data, plans):
     # pass the data to gpt to get recommendations
+    pass
