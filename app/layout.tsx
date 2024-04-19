@@ -22,7 +22,7 @@ export default function RootLayout({
         <body className="bg-zinc-200">
           <div className="container">
             {/* Navbar */}
-            <div className="h-16">
+            <div className="h-16 z-50">
               <nav className="fixed inset-x-0 bg-white shadow dark:bg-gray-950">
                 <div className="container">
                   <div className="flex items-center h-16">
