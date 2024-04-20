@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 import requests
 from flask_cors import CORS
-import json
 
 app = Flask(__name__)
 
@@ -16,8 +15,10 @@ def user_preferences():
 
     return jsonify({'outfit_ids': outfit_ids})
 
+
 def train_user_model(outfit_ids):
     pass
+
 
 @app.route('/api/get_data', methods=['POST'])
 def get_data():
@@ -35,7 +36,7 @@ def get_data():
 
 # METHOD TO GET WEATHER DATA
 def query_openweather(zipcode):
-    ''' we get the forecast for the whole day for the given zipcode '''
+    ''' get the forecast for the whole day for the given zipcode '''
 
     WEATHER_API_KEY = 'e31953beb2e64692b8b213507241904'
     END_POINT = f"https://api.weatherapi.com/v1/forecast.json?key={WEATHER_API_KEY}&q={zipcode}&days=1"
@@ -73,11 +74,42 @@ def query_openweather(zipcode):
         },
     '''
 
-    # we pass whatever we need to gpt
-    return response
+    data_to_pass = {
+        "avg_temp_f": response["avgtemp_f"],
+        "max_wind_mph": response["maxwind_mph"],
+        "total_precip_mm": response["totalprecip_mm"],
+        "total_snow_cm": response["totalsnow_cm"],
+        "avg_humidity": response["avghumidity"],
+        "chance_of_rain_precent": response["daily_chance_of_rain"],
+        "chance_of_snow_percent": response["daily_chance_of_snow"],
+        "condition": response["condition"]["text"],
+        "uv_index": response["uv"]
+    }
+
+    return data_to_pass
 
 
 # METHOD TO GET RECOMMENDATIONS FROM GPT
 def query_gpt(weather_data, plans):
-    # pass the data to gpt to get recommendations
-    pass
+    ''' pass on the weather data for the day and special plans to ask GPT to recommend outfits '''
+
+    GPT_API_KEY = 'sk-proj-d8p1CLVDyQ5NofxlQcM8T3BlbkFJbF9U38go8skHt1AOsn8S'
+    END_POINT = 'https://api.openai.com/v1/completions'
+
+    CLOTHING_CATEGORIES = ['Blazer', 'Blouse', 'Hoodie', 'Jacket', 'Sweater', 'Tee', 'Top',
+                       'Cutoffs', 'Jeans', 'Leggings', 'Shorts', 'Skirt', 'Sweatpants', 'Coat']
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {GPT_API_KEY}"
+    }
+
+    prompt = f'''
+        We have this clothing categories {CLOTHING_CATEGORIES} and 
+        the area where user is situated has the following weather forecast {weather_data} for the day
+        What would you 
+    '''
+
+    data = {
+        "model": "text-davinci-003",
+    }
