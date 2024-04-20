@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 import requests
 from flask_cors import CORS
+from openai import OpenAI
 
 app = Flask(__name__)
 
@@ -90,26 +91,53 @@ def query_openweather(zipcode):
 
 
 # METHOD TO GET RECOMMENDATIONS FROM GPT
-def query_gpt(weather_data, plans):
+def query_gpt(weather_data, clothing_prefs, plans):
     ''' pass on the weather data for the day and special plans to ask GPT to recommend outfits '''
 
-    GPT_API_KEY = 'sk-proj-d8p1CLVDyQ5NofxlQcM8T3BlbkFJbF9U38go8skHt1AOsn8S'
-    END_POINT = 'https://api.openai.com/v1/completions'
+    client = OpenAI(api_key="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")
 
-    CLOTHING_CATEGORIES = ['Blazer', 'Blouse', 'Hoodie', 'Jacket', 'Sweater', 'Tee', 'Top',
-                       'Cutoffs', 'Jeans', 'Leggings', 'Shorts', 'Skirt', 'Sweatpants', 'Coat']
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an outfit picking assistant that will use my clothing preferences and current weather & location to pick an outfit for my day.",
+            },
+            {
+                "role": "user",
+                "content": f'''
+                                The weather data of my location for the day is this {weather_data} and my plans for the day are {plans}.
+                                My clothing preferences are these - {clothing_prefs}
+                                What types of clothes should I wear today? You response should include each major article of clothing I should wear with no other text. Only give optional articles if necessary.
 
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {GPT_API_KEY}"
-    }
+                                Feminine Options:
+                                    Lower Body Options: Sweatpants, Skirt, Shorts, Leggings, Jeans, Cutoffs
+                                    Upper Body Options: Top, Tee, Sweater, Blouse
+                                    Optional Upper Body Outerwear: Coat, Jacket, Hoodie, Blazer
 
-    prompt = f'''
-        We have this clothing categories {CLOTHING_CATEGORIES} and 
-        the area where user is situated has the following weather forecast {weather_data} for the day
-        What would you 
-    '''
+                                Masculine Options:
+                                    Lower Body Options: Sweatpants, Shorts, Jeans
+                                    Upper Body Options: Tee, Sweater
+                                    Optional Upper Body Outerwear: Coat, Jacket, Hoodie, Blazer
 
-    data = {
-        "model": "text-davinci-003",
-    }
+                                
+                                For each article you must select an attribute for each to recommend based on my preferences.
+                                Pick any of the attributes within the parenthesis for each article that makes sense.
+                    
+                                Here are the possible options:
+                                Patterns: (floral, graphic, striped, embroidered, solid)
+                                Sleeve_length: (long_sleeve, short_sleeve, sleeveless)
+                                Neckline: (crew_neckline, v_neckline, no_neckline)
+                                Fit: (tight, loose, conventional)
+                                Materials: (denim, cotton, leather, knit)
+
+                                Format: "|<lower body article>|<upper body article>|<optional upper body outerwear>|"
+                                Example: |floral cotton loose Shorts|short_sleeve v_neckline loose knit Top||
+                            '''
+            },
+        ]
+    )
+    
+    response = completion.choices[0].message.content
+        
+    return response
