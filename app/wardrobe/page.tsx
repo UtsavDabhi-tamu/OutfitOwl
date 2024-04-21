@@ -56,23 +56,35 @@ export default function Wardrobe() {
     );
     items.push(createPageItem(1));
 
-    // First page
-    if (currentPage > 4) {
+    // Second page edge case
+    if (currentPage === 5) {
+      items.push(createPageItem(2));
+    }
+
+    // First ellipsis
+    if (currentPage > 5) {
       items.push(<PaginationEllipsis key="ellipsis1" />);
     }
 
     // Page numbers around the current page
     const startPage = Math.max(2, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
+    const endPage = Math.min(totalPages - 1, currentPage + 2);
     for (let page = startPage; page <= endPage; page++) {
       items.push(createPageItem(page));
     }
 
-    // Last page
-    if (currentPage < totalPages - 2) {
-      items.push(<PaginationEllipsis key="ellipsis2" />);
-      items.push(createPageItem(totalPages));
+    // Second page to last edge case
+    if (currentPage === totalPages - 4) {
+      items.push(createPageItem(totalPages - 1));
     }
+
+    // Last ellipsis
+    if (currentPage < totalPages - 4) {
+      items.push(<PaginationEllipsis key="ellipsis2" />);
+    }
+
+    // Last page
+    items.push(createPageItem(totalPages));
 
     // Next page button
     items.push(

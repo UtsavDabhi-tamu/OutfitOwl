@@ -23,8 +23,22 @@ export default function Preferences() {
   const { selectedProfile, setSelectedProfile, profiles, setProfiles } =
     useProfile();
 
-  const categories = ["Blazer", "Blouse", "Hoodie", "Jacket", "Sweater", "Tee", "Top", "Cutoffs",
-                      "Jeans", "Leggings", "Shorts", "Skirt", "Sweatpants", "Coat"]
+  const categories = [
+    "Blazer",
+    "Blouse",
+    "Hoodie",
+    "Jacket",
+    "Sweater",
+    "Tee",
+    "Top",
+    "Cutoffs",
+    "Jeans",
+    "Leggings",
+    "Shorts",
+    "Skirt",
+    "Sweatpants",
+    "Coat",
+  ];
 
   const subCategories = [
     ["Floral", "Denim", "Leather", "Knit"],
@@ -32,23 +46,52 @@ export default function Preferences() {
     ["Floral", "Graphic", "Striped", "Sleeveless", "Denim", "Leather", "Knit"],
     ["Floral", "Striped", "Embroidered", "Denim", "Leather", "Knit"],
     ["Floral", "Graphic", "Striped", "Solid", "Sleeveless", "Knit", "Loose"],
-    ["Floral", "Graphic", "Striped", "Embroidered", "Denim", "Cotton", "Leather", "Knit", "Loose"],
-    ["Floral", "Graphic", "Striped", "Embroidered", "Long_sleeve", "Denim", "Leather", "Knit", "Loose"],
+    [
+      "Floral",
+      "Graphic",
+      "Striped",
+      "Embroidered",
+      "Denim",
+      "Cotton",
+      "Leather",
+      "Knit",
+      "Loose",
+    ],
+    [
+      "Floral",
+      "Graphic",
+      "Striped",
+      "Embroidered",
+      "Long_sleeve",
+      "Denim",
+      "Leather",
+      "Knit",
+      "Loose",
+    ],
     ["Floral", "Embroidered", "Solid", "Denim"],
     ["Solid", "Denim", "Leather"],
     ["Floral", "Striped", "Solid", "Leather", "Knit"],
-    ["Floral", "Graphic", "Striped", "Embroidered", "Denim", "Cotton", "Leather", "Knit"],
+    [
+      "Floral",
+      "Graphic",
+      "Striped",
+      "Embroidered",
+      "Denim",
+      "Cotton",
+      "Leather",
+      "Knit",
+    ],
     ["Floral", "Graphic", "Striped", "Embroidered", "Denim", "Leather", "Knit"],
     ["Floral", "Graphic", "Striped", "Leather", "Knit"],
-    ["Denim", "Cotton", "Leather", "Knit"]
-  ]
+    ["Denim", "Cotton", "Leather", "Knit"],
+  ];
 
   const [likedImages, setLikedImages] = useState<{
     categoryCount: number;
-    images: Set<string>;  // Change the type of the `images` key to `Set<string>` (or any other type you prefer)
+    images: Set<string>; // Change the type of the `images` key to `Set<string>` (or any other type you prefer)
   }>({
-      categoryCount: 0,
-      images: new Set<string>(),  // Initialize `images` as `new Set<string>()`
+    categoryCount: 0,
+    images: new Set<string>(), // Initialize `images` as `new Set<string>()`
   });
 
   const imagePath = "/images/preferences";
@@ -56,8 +99,8 @@ export default function Preferences() {
   const totalPages = categories.length;
 
   const currentImages = subCategories[currentPage - 1].map(
-    subCategory => `${categories[currentPage - 1]}/${subCategory}/0.jpg`
-  )
+    (subCategory) => `${categories[currentPage - 1]}/${subCategory}/0.jpg`
+  );
 
   const handleLike = (subPath: string) => {
     setLikedImages((prev) => {
@@ -65,35 +108,37 @@ export default function Preferences() {
         categoryCount: 0,
         images: new Set<string>(prev.images),
       };
-      if(newLikedImages['images'].has(subPath)) {
-        newLikedImages['images'].delete(subPath)
+      if (newLikedImages["images"].has(subPath)) {
+        newLikedImages["images"].delete(subPath);
       } else {
-        newLikedImages['images'].add(subPath)
+        newLikedImages["images"].add(subPath);
       }
-      newLikedImages['categoryCount'] = new Set(Array.from(newLikedImages.images).map(path => path.split('/')[0])).size
+      newLikedImages["categoryCount"] = new Set(
+        Array.from(newLikedImages.images).map((path) => path.split("/")[0])
+      ).size;
       return newLikedImages;
     });
-
   };
 
   const sendPreferences = () => {
-    console.log(likedImages)
-    fetch('http://127.0.0.1:5328/api/store_preferences', {
-      method: 'POST',
+    console.log(likedImages);
+    fetch("http://127.0.0.1:5328/api/store_preferences", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        outfit_ids: Array.from(likedImages['images'])
+        outfit_ids: Array.from(likedImages["images"]),
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
       })
-    }).then(response => response.json())
-      .then(data => {
-        console.log(data)
-      })
-      .catch(err => {
-        console.log(err)
+      .catch((err) => {
+        console.log(err);
       });
-  }
+  };
 
   const paginationItems = () => {
     let items = [];
@@ -125,23 +170,35 @@ export default function Preferences() {
     );
     items.push(createPageItem(1));
 
-    // First page
-    if (currentPage > 4) {
+    // Second page edge case
+    if (currentPage === 5) {
+      items.push(createPageItem(2));
+    }
+
+    // First ellipsis
+    if (currentPage > 5) {
       items.push(<PaginationEllipsis key="ellipsis1" />);
     }
 
     // Page numbers around the current page
     const startPage = Math.max(2, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
+    const endPage = Math.min(totalPages - 1, currentPage + 2);
     for (let page = startPage; page <= endPage; page++) {
       items.push(createPageItem(page));
     }
 
-    // Last page
-    if (currentPage < totalPages - 2) {
-      items.push(<PaginationEllipsis key="ellipsis2" />);
-      items.push(createPageItem(totalPages));
+    // Second page to last edge case
+    if (currentPage === totalPages - 4) {
+      items.push(createPageItem(totalPages - 1));
     }
+
+    // Last ellipsis
+    if (currentPage < totalPages - 4) {
+      items.push(<PaginationEllipsis key="ellipsis2" />);
+    }
+
+    // Last page
+    items.push(createPageItem(totalPages));
 
     // Next page button
     items.push(
@@ -178,11 +235,25 @@ export default function Preferences() {
       <div className="grid grid-cols-4 gap-4 mx-auto justify-items-center xl:grid-cols-5">
         {/* <div className="flex justify-end w-full col-span-4 gap-4 mb-4 xl:col-span-5">
         </div> */}
-        <div className="flex justify-end w-full col-span-4 gap-4 mb-4 xl:col-span-5">
-          {/* <h3>{categories[currentPage - 1]}</h3> */}
-          <ProfileSelector />
-          <Button onClick={() => sendPreferences()} disabled={likedImages['categoryCount'] !== categories.length}>Submit</Button>
-          {/* <AddProfilePopover /> */}
+        <div className="flex justify-between w-full col-span-4 mb-4 xl:col-span-5">
+          <h3 className="font-semibold text-xl my-auto">
+            {categories[currentPage - 1]}
+            {categories[currentPage - 1][
+              categories[currentPage - 1].length - 1
+            ] == "s"
+              ? ""
+              : "s"}
+          </h3>
+          <div className="flex gap-4">
+            <ProfileSelector />
+            {/* <AddProfilePopover /> */}
+            <Button
+              onClick={() => sendPreferences()}
+              disabled={likedImages["categoryCount"] !== categories.length}
+            >
+              Submit
+            </Button>
+          </div>
         </div>
 
         {currentImages.map((subPath, index) => (
@@ -193,7 +264,7 @@ export default function Preferences() {
             <Button
               onClick={() => handleLike(subPath)}
               style={{
-                color: likedImages['images'].has(subPath) ? "red" : "grey",
+                color: likedImages["images"].has(subPath) ? "red" : "grey",
               }}
               variant="heart"
               className="absolute top-0 right-0 p-2 m-2 text-3xl rounded-md shadow-md"
