@@ -7,6 +7,8 @@ interface ProfileContextType {
   setSelectedProfile: (profile: string | undefined) => void;
   profiles: string[];
   setProfiles: (profiles: string[]) => void;
+  profileTypes: Map<string, string>;
+  setProfileTypes: (profileTypes: Map<string, string>) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -27,10 +29,27 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
     "Casual",
     "Formal",
   ]);
+  const [profileTypes, setProfileTypes] = useState<Map<string, string>>(
+    new Map([
+      ["Basic", "All"],
+      ["Goth", "Feminine"],
+      ["Preppy", "Masculine"],
+      ["Sporty", "Feminine"],
+      ["Casual", "Masculine"],
+      ["Formal", "Masculine"],
+    ])
+  );
 
   return (
     <ProfileContext.Provider
-      value={{ selectedProfile, setSelectedProfile, profiles, setProfiles }}
+      value={{
+        selectedProfile,
+        setSelectedProfile,
+        profiles,
+        setProfiles,
+        profileTypes,
+        setProfileTypes,
+      }}
     >
       {children}
     </ProfileContext.Provider>

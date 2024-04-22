@@ -19,8 +19,7 @@ import { useProfile } from "../contexts/profileContext";
 import { useState } from "react";
 
 const AddProfilePopover = () => {
-  const { selectedProfile, setSelectedProfile, profiles, setProfiles } =
-    useProfile();
+  const { profiles, setProfiles, profileTypes, setProfileTypes } = useProfile();
 
   const [clothingType, setClothingType] = useState("");
   const [profileName, setProfileName] = useState("");
@@ -31,6 +30,9 @@ const AddProfilePopover = () => {
     console.log("Name:", profileName);
     console.log("Clothing Type:", clothingType);
     setProfiles([...profiles, profileName]);
+    setProfileTypes(
+      new Map(profileTypes.set(profileName, clothingType ?? "All"))
+    );
   };
 
   return (

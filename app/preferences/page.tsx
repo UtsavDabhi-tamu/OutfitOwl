@@ -86,20 +86,42 @@ export default function Preferences() {
     ["Denim", "Cotton", "Leather", "Knit"],
   ];
 
+  const [imageFilenames, setImageFilenames] = useState<string[]>([]);
   const [likedImages, setLikedImages] = useState<{
     categoryCount: number;
-    images: Set<string>; // Change the type of the `images` key to `Set<string>` (or any other type you prefer)
+    images: Set<string>;
   }>({
     categoryCount: 0,
-    images: new Set<string>(), // Initialize `images` as `new Set<string>()`
+    images: new Set<string>(),
   });
 
   const imagePath = "/images/preferences";
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = categories.length;
+  const currCategory = categories[currentPage - 1];
+  const currSubCategories = subCategories[currentPage - 1];
 
-  const currentImages = subCategories[currentPage - 1].map(
-    (subCategory) => `${categories[currentPage - 1]}/${subCategory}/0.jpg`
+  useEffect(() => {
+    const fetchImageFilenames = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5328/api/img_filenames"); // Adjust the URL to your Flask endpoint
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setImageFilenames(data);
+      } catch (error) {
+        console.error("Failed to fetch image filenames:", error);
+      }
+    };
+
+    fetchImageFilenames();
+  }, []);
+
+  const currImages = imageFilenames.filter((path: string) =>
+    currSubCategories.some((subCategory: string) =>
+      path.includes(`${currCategory}_${subCategory}`)
+    )
   );
 
   const handleLike = (subPath: string) => {
@@ -256,7 +278,7 @@ export default function Preferences() {
           </div>
         </div>
 
-        {currentImages.map((subPath, index) => (
+        {currImages.map((subPath, index) => (
           <div
             key={index}
             className="w-[200px] h-[200px] relative rounded-md shadow-sm bg-white flex items-center overflow-hidden"

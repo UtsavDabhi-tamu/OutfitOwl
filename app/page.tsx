@@ -31,6 +31,7 @@ export default function Home() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        profile: selectedProfile,
         zipcode: zipCode,
         plans: specialPlans
       })
