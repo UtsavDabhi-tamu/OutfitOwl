@@ -57,6 +57,12 @@ export default function RootLayout({
                       >
                         Wardrobe
                       </Link>
+                      <Link
+                        className="text-xl font-medium transition-colors border-b-2 border-transparent hover:text-gray-900 hover:border-gray-100 dark:hover:text-gray-50 dark:hover:border-gray-800"
+                        href="/report"
+                      >
+                        Report
+                      </Link>
                     </nav>
                   </div>
                 </div>
