@@ -4,23 +4,128 @@ from flask_cors import CORS
 from openai import OpenAI
 import os
 
+import pickle
+from PIL import Image
+import torch
+from torch import nn
+import torchvision.transforms as transforms
+import torchvision.models as models
+import random
+
 app = Flask(__name__)
 
 # Allow cross-origin requests
 CORS(app)
 
+basic_preferences = [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 
+                    1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 
+                    0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 
+                    0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 
+                    1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 
+                    0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 
+                    0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 
+                    0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 
+                    1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 
+                    0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 
+                    0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 
+                    1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 
+                    0, 1, 1, 1, 0]
+
 
 @app.route("/api/store_preferences", methods=["POST"])
 def user_preferences():
-    outfit_ids = request.json.get("outfit_ids")
-    train_user_model(outfit_ids)
+    likedImages = request.json.get("likedImages")
 
-    return jsonify({"outfit_ids": outfit_ids})
+    return jsonify({"likedImages": likedImages})
 
 
-def train_user_model(outfit_ids):
+def get_sim_image(category, profile="Basic"):
+    # combined_categories = {
+    #     "Top": ["Blouse", "Tee", "Top"],
+    #     "Jeans": ["Jeans", "Leggings", "Leggings", "Sweatpants"],
+    #     "Shorts": ["Shorts", "Cutoffs"],
+    #     "Jacket": ["Blazer", "Coat", "Hoodie", "Jacket"],
+    #     "Skirt": ["Skirt"],
+    #     "Sweater": ["Sweater"],
+    # }
+    # categories = combined_categories[category]
+
+    # Add other profiles later
+    profile_preferences = {
+        "Basic": basic_preferences,
+    }
+    user_preferences = profile_preferences[profile]
+
+    image_directory = "public/images/preferences"
+    images = []
+
+    for root, dirs, files in os.walk(image_directory):
+        for i, file in enumerate(files):
+            # if file.lower().endswith(".jpg") and any(category in file for category in categories) and user_preferences[i] == 1:
+            if file.lower().endswith(".jpg") and category in file and user_preferences[i] == 1:
+                images.append(file)
+    
+    sim_image = random.choice(images)
+    return sim_image
+
+
+# items_to_rec ex. ['Top', 'Shorts']
+def run_vbpr(items_to_rec, profile="Basic"):
+    profile_vbpr = {"Basic": "basic_vbpr.pkl"}
+    vbpr_file_name = profile_vbpr[profile]
+    
+    trainer = None
+    with open(vbpr_file_name, 'rb') as f:
+        trainer = pickle.load(f)
+
+
+    for category in items_to_rec:
+        # Get feature from similar image
+        sim_image = get_sim_image(category, profile)
+        query_img_features = trainer.get_image_feature("preference_features/"+sim_image[:-4]+".pt")
+
+        # Query image features reshaped and appended
+        query_img_features = query_img_features.reshape(1, -1)
+        original_features = trainer.model.features.weight.data.clone()
+        features_with_query = torch.cat([original_features, query_img_features], dim=0)
+        print(features_with_query.shape)
+        trainer.model.features = nn.Embedding.from_pretrained(features_with_query, freeze=True)
+
+        # Update all item-dependent embeddings to include the new item
+        original_gamma_items = trainer.model.gamma_items.weight.data.clone()
+        new_gamma_items = torch.cat([original_gamma_items, torch.zeros(1, original_gamma_items.size(1), device=trainer.model.gamma_items.weight.device)], dim=0)
+        trainer.model.gamma_items = nn.Embedding.from_pretrained(new_gamma_items, freeze=False)
+
+        original_beta_items = trainer.model.beta_items.weight.data.clone()
+        new_beta_items = torch.cat([original_beta_items, torch.zeros(1, 1, device=trainer.model.beta_items.weight.device)], dim=0)
+        trainer.model.beta_items = nn.Embedding.from_pretrained(new_beta_items, freeze=False)
+
+        # Setup indices for model input
+        device = next(trainer.model.parameters()).device
+        user_index = torch.tensor([[0]], device=device)
+
+        # Compute similarity scores with the updated model
+        items_indices = torch.arange(features_with_query.size(0), device=device).unsqueeze(0)
+        scores = trainer.model.recommend(user_index, items_indices)
+
+        # Extract and print top recommendations
+        top_scores, top_indices = torch.topk(scores.squeeze(), 2)
+        top_indices = top_indices[top_indices != (features_with_query.size(0) - 1)]
+
+        print("Top recommended item indices:", top_indices)
+
+        # Restore the original state of the trainer's model
+        trainer.model.features = nn.Embedding.from_pretrained(original_features, freeze=True)
+        trainer.model.gamma_items = nn.Embedding.from_pretrained(original_gamma_items, freeze=False)
+        trainer.model.beta_items = nn.Embedding.from_pretrained(original_beta_items, freeze=False)
+
+        # Get image from top recommended item
+        # top_indices[0]
+
+
+
+def get_user_preference():
     pass
-
 
 @app.route("/api/get_data", methods=["POST"])
 def get_data():
@@ -36,8 +141,12 @@ def get_data():
 
     response = query_gpt(weather_data, clothing_prefs, plans)
 
+    items_to_rec = [item for item in response.split("|") if item != ""]
+    print(items_to_rec)
+    run_vbpr(items_to_rec, profile)
+
     # return jsonify(weather_data)
-    return jsonify([item for item in response.split("|") if item != ""])
+    return jsonify(items_to_rec)
 
 
 # METHOD TO GET WEATHER DATA
@@ -125,19 +234,8 @@ def query_gpt(weather_data, clothing_prefs, plans):
                         Upper Body Options: Tee, Sweater
                         Optional Upper Body Outerwear: Coat, Jacket, Hoodie, Blazer
 
-                    
-                    For each article you must select an attribute for each to recommend based on my preferences.
-                    Pick any of the attributes within the parenthesis for each article that makes sense.
-        
-                    Here are the possible options:
-                    Patterns: (floral, graphic, striped, embroidered, solid)
-                    Sleeve_length: (long_sleeve, short_sleeve, sleeveless)
-                    Neckline: (crew_neckline, v_neckline, no_neckline)
-                    Fit: (tight, loose, conventional)
-                    Materials: (denim, cotton, leather, knit)
-
                     Format: "|<lower body article>|<upper body article>|<optional upper body outerwear>|"
-                    Example: |floral cotton loose Shorts|short_sleeve v_neckline loose knit Top||
+                    Example: |Shorts|Top|Jacket|
                 """,
             },
         ],

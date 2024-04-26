@@ -18,10 +18,17 @@ import ProfileSelector from "@/components/profile-selector";
 import AddProfilePopover from "@/components/add-profile-popover";
 import { useProfile } from "@/contexts/profileContext";
 import { useState, useEffect } from "react";
+import { set } from "date-fns";
 
 export default function Preferences() {
-  const { selectedProfile, setSelectedProfile, profiles, setProfiles } =
-    useProfile();
+  const {
+    selectedProfile,
+    setSelectedProfile,
+    profiles,
+    setProfiles,
+    profileLikes,
+    setProfileLikes,
+  } = useProfile();
 
   const categories = [
     "Blazer",
@@ -87,13 +94,9 @@ export default function Preferences() {
   ];
 
   const [imageFilenames, setImageFilenames] = useState<string[]>([]);
-  const [likedImages, setLikedImages] = useState<{
-    categoryCount: number;
-    images: Set<string>;
-  }>({
-    categoryCount: 0,
-    images: new Set<string>(),
-  });
+  const [likedImages, setLikedImages] = useState<number[]>(
+    new Array(221).fill(0)
+  );
 
   const imagePath = "/images/preferences";
   const [currentPage, setCurrentPage] = useState(1);
@@ -101,6 +104,7 @@ export default function Preferences() {
   const currCategory = categories[currentPage - 1];
   const currSubCategories = subCategories[currentPage - 1];
 
+  // fetch img file names
   useEffect(() => {
     const fetchImageFilenames = async () => {
       try {
@@ -118,31 +122,35 @@ export default function Preferences() {
     fetchImageFilenames();
   }, []);
 
+  useEffect(() => {
+    console.log("Selected profile:", selectedProfile)
+    if (selectedProfile !== undefined)
+      setLikedImages(profileLikes.get(selectedProfile) || Array(221).fill(0));
+  }, [selectedProfile]);
+
   const currImages = imageFilenames.filter((path: string) =>
     currSubCategories.some((subCategory: string) =>
       path.includes(`${currCategory}_${subCategory}`)
     )
   );
 
-  const handleLike = (subPath: string) => {
-    setLikedImages((prev) => {
-      const newLikedImages = {
-        categoryCount: 0,
-        images: new Set<string>(prev.images),
-      };
-      if (newLikedImages["images"].has(subPath)) {
-        newLikedImages["images"].delete(subPath);
-      } else {
-        newLikedImages["images"].add(subPath);
-      }
-      newLikedImages["categoryCount"] = new Set(
-        Array.from(newLikedImages.images).map((path) => path.split("/")[0])
-      ).size;
+  const handleLike = (index: number) => {
+    setLikedImages((_prev: any) => {
+      let newLikedImages = likedImages;
+      if (likedImages[index] == 1) newLikedImages[index] = 0;
+      else if (likedImages[index] == 0) newLikedImages[index] = 1;
       return newLikedImages;
     });
+    if (likedImages[index]) console.log("Liked Image:", index);
+    else console.log("Unliked Image:", index);
   };
 
   const sendPreferences = () => {
+    // setProfileLikes((_prev) => {
+    //   let newProfileLikes = new Map(profileLikes);
+    //   newProfileLikes.set(selectedProfile || "", likedImages);
+    //   return newProfileLikes;
+    // });
     console.log(likedImages);
     fetch("http://127.0.0.1:5328/api/store_preferences", {
       method: "POST",
@@ -150,7 +158,7 @@ export default function Preferences() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        outfit_ids: Array.from(likedImages["images"]),
+        likedImages: likedImages,
       }),
     })
       .then((response) => response.json())
@@ -268,10 +276,10 @@ export default function Preferences() {
           </h3>
           <div className="flex gap-4">
             <ProfileSelector />
-            {/* <AddProfilePopover /> */}
+            <AddProfilePopover />
             <Button
               onClick={() => sendPreferences()}
-              disabled={likedImages["categoryCount"] !== categories.length}
+              // disabled={likedImages["categoryCount"] !== categories.length}
             >
               Submit
             </Button>
@@ -284,9 +292,11 @@ export default function Preferences() {
             className="w-[200px] h-[200px] relative rounded-md shadow-sm bg-white flex items-center overflow-hidden"
           >
             <Button
-              onClick={() => handleLike(subPath)}
+              onClick={() => {
+                handleLike(parseInt(subPath.split("_")[3].split(".")[0]));
+              }}
               style={{
-                color: likedImages["images"].has(subPath) ? "red" : "grey",
+                color: likedImages[index] == 1 ? "red" : "grey",
               }}
               variant="heart"
               className="absolute top-0 right-0 p-2 m-2 text-3xl rounded-md shadow-md"
