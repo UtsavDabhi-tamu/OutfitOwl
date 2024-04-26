@@ -135,14 +135,14 @@ export default function Preferences() {
   );
 
   const handleLike = (index: number) => {
-    setLikedImages((_prev: any) => {
-      let newLikedImages = likedImages;
-      if (likedImages[index] == 1) newLikedImages[index] = 0;
-      else if (likedImages[index] == 0) newLikedImages[index] = 1;
+    setLikedImages((prev: any) => {
+      let newLikedImages = [...prev];
+      if (prev[index] == 1) newLikedImages[index] = 0;
+      else if (prev[index] == 0) newLikedImages[index] = 1;
       return newLikedImages;
     });
-    if (likedImages[index]) console.log("Liked Image:", index);
-    else console.log("Unliked Image:", index);
+    if (likedImages[index]) console.log("Unliked Image:", index);
+    else console.log("Liked Image:", index);
   };
 
   const sendPreferences = () => {
@@ -296,7 +296,7 @@ export default function Preferences() {
                 handleLike(parseInt(subPath.split("_")[3].split(".")[0]));
               }}
               style={{
-                color: likedImages[index] == 1 ? "red" : "grey",
+                color: likedImages[parseInt(subPath.split("_")[3].split(".")[0])] == 1 ? "red" : "grey",
               }}
               variant="heart"
               className="absolute top-0 right-0 p-2 m-2 text-3xl rounded-md shadow-md"

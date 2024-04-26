@@ -22,10 +22,12 @@ interface ProfileProviderProps {
 export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   children,
 }) => {
-  const [selectedProfile, setSelectedProfile] = useState<string | undefined>("Basic");
+  const [selectedProfile, setSelectedProfile] = useState<string | undefined>(
+    "Basic"
+  );
   const [profiles, setProfiles] = useState<string[]>([
     "Basic",
-    "Goth",
+    "Michael",
     "Preppy",
     "Sporty",
     "Casual",
@@ -34,11 +36,11 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   const [profileTypes, setProfileTypes] = useState<Map<string, string>>(
     new Map([
       ["Basic", "All"],
-      ["Goth", "Feminine"],
+      ["Michael", "Masculine"],
       ["Preppy", "Masculine"],
       ["Sporty", "Feminine"],
       ["Casual", "Masculine"],
-      ["Formal", "Masculine"],
+      ["Formal", "Feminine"],
     ])
   );
   const [profileLikes, setProfileLikes] = useState<Map<string, number[]>>(
@@ -58,7 +60,21 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
           1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
         ],
       ],
-      ["Goth", Array(221).fill(0)],
+      [
+        "Michael",
+        [
+          1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+          0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
+          1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1,
+          0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0,
+          1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+          0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+          0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
+          1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
+          0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
+        ],
+      ],
       ["Preppy", Array(221).fill(0)],
       ["Sporty", Array(221).fill(0)],
       ["Casual", Array(221).fill(0)],
@@ -77,8 +93,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
         setProfileTypes,
         profileLikes,
         setProfileLikes,
-      }}
-    >
+      }}>
       {children}
     </ProfileContext.Provider>
   );

@@ -35,6 +35,7 @@ basic_preferences = [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1,
 @app.route("/api/store_preferences", methods=["POST"])
 def user_preferences():
     likedImages = request.json.get("likedImages")
+    print(likedImages)
 
     return jsonify({"likedImages": likedImages})
 
