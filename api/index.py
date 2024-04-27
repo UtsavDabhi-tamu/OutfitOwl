@@ -500,6 +500,7 @@ reverse_combined_categories = {
 
 retries = 0
 
+
 @app.route("/api/store_preferences", methods=["POST"])
 def user_preferences():
     likedImages = request.json.get("likedImages")
@@ -523,6 +524,8 @@ def get_sim_image(category, profile="Basic"):
             ):
                 images.append(file)
 
+    if len(images) == 0:
+        return "Jeans_Solid_3_92.jpg"
     sim_image = random.choice(images)
     return sim_image
 
@@ -641,7 +644,7 @@ def run_vbpr(items_to_rec, profile="Basic"):
     for index in top_indices:
         tensor_name = tensor_names[index]
         category = map_tensor_to_category(tensor_name)
-        if category and tensor_name.count('_') == 2:
+        if category and tensor_name.count("_") == 2:
             category_lists[category].append(tensor_name)
 
     images_to_rec = []
@@ -655,14 +658,30 @@ def run_vbpr(items_to_rec, profile="Basic"):
             retries += 1
             images_to_rec.append(run_vbpr([category], profile)[0])
             continue
+
         if len(category_lists[reverse_combined_categories[category]]) == 0:
             images_to_rec.append(category + "_0.jpg")
             continue
 
-        tensor_name = random.choice(
-            category_lists[reverse_combined_categories[category]]
+        tensor_specific_subset = []
+        tensor_general_subset = []
+
+        for tensor_name in category_lists[reverse_combined_categories[category]]:
+            if category.lower() in tensor_name.lower():
+                tensor_specific_subset.append(tensor_name)
+            else:
+                tensor_general_subset.append(tensor_name)
+
+        tensor_subset = (
+            len(tensor_specific_subset) > 0
+            and tensor_specific_subset
+            or tensor_general_subset
         )
-        images_to_rec.append(tensor_name[: -len("_features.pt")] + ".jpg")
+        print("Specific Subset:", tensor_specific_subset)
+        print("General Subset:", tensor_general_subset)
+        print("Image Subset:", tensor_subset)
+        image_name = random.choice(tensor_subset)[: -len("_features.pt")] + ".jpg"
+        images_to_rec.append(image_name)
 
     # images_to_rec = {}
 
@@ -768,6 +787,8 @@ def query_gpt(weather_data, clothing_prefs, plans):
                 "role": "user",
                 "content": f"""
                     The weather data of my location for the day is this {weather_data} and my plans for the day are {plans}.
+                    Unless otherwise stated, I am going outside in the daytime and normally only wear jackets unless occasion or weather requires it.
+                    If my plans typically require conforming to a dress code, please recommend accordingly.
                     My clothing preferences are these - {clothing_prefs}
                     What types of clothes should I wear today? Your response should include each major article of clothing I should wear with no other text. 
                     Do not give optional articles unless absolutely necessary.
@@ -790,7 +811,9 @@ def query_gpt(weather_data, clothing_prefs, plans):
     )
 
     response = completion.choices[0].message.content
-    items_to_rec = [item.strip() for item in response.strip().split("|") if item != ""]
+    items_to_rec = [
+        item.strip() for item in response.strip().split("|") if item.strip() != ""
+    ]
 
     return items_to_rec
 

@@ -127,38 +127,44 @@ export default function Home() {
           ) : (
             <>
               {outerArticle != "" ? (
-                <div className="grid h-full grid-cols-2 gap-4">
-                  <div className="flex justify-center">
+                <div className="grid grid-cols-2 gap-4 min-h-[550px]">
+                  <div className="flex items-center min-w-[200px] my-0">
                     <Image
                       src={upperBodyArticle}
                       alt="Upper Body"
                       width={200}
                       height={200}
-                      className="max-h-[250px]"
+                      className="max-h-[250px] min-h-[200px]"
                       style={{
                         width: "auto",
+                        margin: "auto",
                       }}
                     />
                   </div>
-                  <div className="flex justify-center row-start-2">
+                  <div className="flex justify-center row-start-2 min-w-[200px]">
                     <Image
                       src={lowerBodyArticle}
                       alt="Lower Body"
                       width={200}
                       height={200}
-                      className="max-h-[250px]"
+                      className="max-h-[250px] min-h-[200px]"
                       style={{
                         width: "auto",
+                        margin: "auto",
                       }}
                     />
                   </div>
-                  <div className="flex items-center col-start-2 row-span-2">
+                  <div className="flex items-center col-start-2 row-span-2 min-w-[200px]">
                     <Image
                       src={outerArticle}
                       alt="Outer Upper Body Layer"
                       width={200}
                       height={200}
-                      className="max-h-[250px]"
+                      className="max-h-[250px] min-h-[200px]"
+                      style={{
+                        width: "auto",
+                        margin: "auto",
+                      }}
                     />
                   </div>
                 </div>
@@ -170,9 +176,10 @@ export default function Home() {
                       alt="Upper Body"
                       width={200}
                       height={200}
-                      className="max-h-[250px]"
+                      className="max-h-[250px] justify-self-center"
                       style={{
                         width: "auto",
+                        margin: "auto",
                       }}
                     />
                   </div>
@@ -185,6 +192,7 @@ export default function Home() {
                       className="max-h-[250px]"
                       style={{
                         width: "auto",
+                        margin: "auto",
                       }}
                     />
                   </div>
