@@ -25,17 +25,15 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   const [selectedProfile, setSelectedProfile] = useState<string>("Basic");
   const [profiles, setProfiles] = useState<string[]>([
     "Basic",
-    "Michael",
-    "Floral",
+    "Patterns",
     "Sporty",
     "Casual",
     "Formal",
   ]);
   const [profileTypes, setProfileTypes] = useState<Map<string, string>>(
     new Map([
-      ["Basic", "All"],
-      ["Michael", "Masculine"],
-      ["Floral", "Feminine"],
+      ["Basic", "Masculine"],
+      ["Patterns", "Feminine"],
       ["Sporty", "Feminine"],
       ["Casual", "Masculine"],
       ["Formal", "Feminine"],
@@ -45,21 +43,6 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
     new Map([
       [
         "Basic",
-        [
-          1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0,
-          0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1,
-          1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0,
-          0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
-          1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0,
-          1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
-          0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0,
-          1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1,
-          0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0,
-          1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-        ],
-      ],
-      [
-        "Michael",
         [
           1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
           0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
@@ -74,7 +57,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
         ],
       ],
       [
-        "Floral",
+        "Patterns",
         [
           0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
           0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1,

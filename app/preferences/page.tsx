@@ -108,7 +108,9 @@ export default function Preferences() {
   useEffect(() => {
     const fetchImageFilenames = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5328/api/img_filenames"); // Adjust the URL to your Flask endpoint
+        const response = await fetch(
+          "http://127.0.0.1:5328/api/pref_img_filenames"
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -123,7 +125,7 @@ export default function Preferences() {
   }, []);
 
   useEffect(() => {
-    console.log("Selected profile:", selectedProfile)
+    console.log("Selected profile:", selectedProfile);
     if (selectedProfile !== undefined)
       setLikedImages(profileLikes.get(selectedProfile) || Array(221).fill(0));
   }, [selectedProfile]);
@@ -296,7 +298,11 @@ export default function Preferences() {
                 handleLike(parseInt(subPath.split("_")[3].split(".")[0]));
               }}
               style={{
-                color: likedImages[parseInt(subPath.split("_")[3].split(".")[0])] == 1 ? "red" : "grey",
+                color:
+                  likedImages[parseInt(subPath.split("_")[3].split(".")[0])] ==
+                  1
+                    ? "red"
+                    : "grey",
               }}
               variant="heart"
               className="absolute top-0 right-0 p-2 m-2 text-3xl rounded-md shadow-md"

@@ -20,236 +20,12 @@ CORS(app)
 
 profile_vbpr = {
     "Basic": "api/Basic.pkl",
-    "Michael": "api/Michael.pkl",
-    "Floral": "api/Floral.pkl",
+    "Patterns": "api/Patterns.pkl",
 }
 profile_preferences = {
     "Basic": [
         1,
         1,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        0,
-    ],
-    "Michael": [
-        1,
-        1,
         1,
         0,
         0,
@@ -470,7 +246,7 @@ profile_preferences = {
         1,
         0,
     ],
-    "Floral": [
+    "Patterns": [
         0,
         0,
         0,
@@ -722,6 +498,8 @@ reverse_combined_categories = {
 }
 
 
+retries = 0
+
 @app.route("/api/store_preferences", methods=["POST"])
 def user_preferences():
     likedImages = request.json.get("likedImages")
@@ -863,23 +641,35 @@ def run_vbpr(items_to_rec, profile="Basic"):
     for index in top_indices:
         tensor_name = tensor_names[index]
         category = map_tensor_to_category(tensor_name)
-        if category:
+        if category and tensor_name.count('_') == 2:
             category_lists[category].append(tensor_name)
 
-    # images_to_rec = []
+    images_to_rec = []
+
+    for i, category in enumerate(items_to_rec):
+        if not category in reverse_combined_categories:
+            if retries > 3:
+                retries = 0
+                images_to_rec.append("default.jpg")
+                continue
+            retries += 1
+            images_to_rec.append(run_vbpr([category], profile)[0])
+            continue
+        if len(category_lists[reverse_combined_categories[category]]) == 0:
+            images_to_rec.append(category + "_0.jpg")
+            continue
+
+        tensor_name = random.choice(
+            category_lists[reverse_combined_categories[category]]
+        )
+        images_to_rec.append(tensor_name[: -len("_features.pt")] + ".jpg")
+
+    # images_to_rec = {}
 
     # for category in items_to_rec:
-    #     tensor_name = random.choice(
-    #         category_lists[reverse_combined_categories[category]]
-    #     )
-    #     images_to_rec.append(tensor_name[: -len("_features.pt")] + ".jpg")
-
-    images_to_rec = {}
-
-    for category in items_to_rec:
-        images_to_rec[category] = []
-        for tensor_name in category_lists[reverse_combined_categories[category]]:
-            images_to_rec[category].append(tensor_name[: -len("_features.pt")] + ".jpg")
+    #     images_to_rec[category] = []
+    #     for tensor_name in category_lists[reverse_combined_categories[category]]:
+    #         images_to_rec[category].append(tensor_name[: -len("_features.pt")] + ".jpg")
 
     return images_to_rec
 
@@ -889,18 +679,19 @@ def get_data():
     data = request.get_json()
 
     zipcode = data["zipcode"]
-    weather_data = query_openweather(zipcode)
+    weather_data = ""
+    if zipcode:
+        weather_data = query_openweather(zipcode)
 
     plans = data["plans"]
-
     profile = data["profile"]
     clothing_prefs = data["clothing_prefs"]
 
-    response = query_gpt(weather_data, clothing_prefs, plans)
+    items_to_rec = query_gpt(weather_data, clothing_prefs, plans)
 
-    items_to_rec = [item for item in response.split("|") if item != ""]
     print("Items to Recommend:", items_to_rec)
     images_to_rec = run_vbpr(items_to_rec, profile)
+    print("Images to Recommend:", images_to_rec)
 
     return jsonify(images_to_rec)
 
@@ -978,7 +769,8 @@ def query_gpt(weather_data, clothing_prefs, plans):
                 "content": f"""
                     The weather data of my location for the day is this {weather_data} and my plans for the day are {plans}.
                     My clothing preferences are these - {clothing_prefs}
-                    What types of clothes should I wear today? You response should include each major article of clothing I should wear with no other text. Only give optional articles if necessary.
+                    What types of clothes should I wear today? Your response should include each major article of clothing I should wear with no other text. 
+                    Do not give optional articles unless absolutely necessary.
 
                     Feminine Options:
                         Lower Body Options: Sweatpants, Skirt, Shorts, Leggings, Jeans, Cutoffs
@@ -991,20 +783,34 @@ def query_gpt(weather_data, clothing_prefs, plans):
                         Optional Upper Body Outerwear: Coat, Jacket, Hoodie, Blazer
 
                     Format: "|<lower body article>|<upper body article>|<optional upper body outerwear>|"
-                    Example: |Shorts|Top|Jacket|
+                    Example: |Shorts|Top|Jacket| or |Jeans|Tee||
                 """,
             },
         ],
     )
 
     response = completion.choices[0].message.content
+    items_to_rec = [item.strip() for item in response.strip().split("|") if item != ""]
 
-    return response
+    return items_to_rec
 
 
-@app.route("/api/img_filenames", methods=["GET"])
-def get_img_filenames():
+@app.route("/api/pref_img_filenames", methods=["GET"])
+def get_pref_img_filenames():
     image_directory = "public/images/preferences"
+    image_filenames = []
+
+    for root, dirs, files in os.walk(image_directory):
+        for file in files:
+            if file.lower().endswith(".jpg"):
+                image_filenames.append(file)
+
+    return jsonify(image_filenames)
+
+
+@app.route("/api/ward_img_filenames", methods=["GET"])
+def get_ward_img_filenames():
+    image_directory = "public/images/wardrobe"
     image_filenames = []
 
     for root, dirs, files in os.walk(image_directory):

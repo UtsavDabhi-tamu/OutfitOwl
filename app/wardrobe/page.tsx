@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 
 export default function Wardrobe() {
   const imagePath = "/images/wardrobe/";
-  const totalImages = 1007; // Total number of images, from 0.jpg to 1006.jpg
+  const totalImages = 1000; // Total number of images, from 0.jpg to 1006.jpg
   const [currentPage, setCurrentPage] = useState(1);
   const imagesPerPage = 20;
   const totalPages = Math.ceil(totalImages / imagesPerPage);
@@ -25,6 +25,28 @@ export default function Wardrobe() {
     { length: imagesPerPage },
     (_, i) => i + indexOfFirstImage
   ).filter((index) => index < totalImages);
+
+  const [imageFilenames, setImageFilenames] = useState<string[]>([]);
+
+  // fetch img file names
+  useEffect(() => {
+    const fetchImageFilenames = async () => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:5328/api/ward_img_filenames"
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setImageFilenames(data);
+      } catch (error) {
+        console.error("Failed to fetch image filenames:", error);
+      }
+    };
+
+    fetchImageFilenames();
+  }, []);
 
   const paginationItems = () => {
     let items = [];
@@ -124,7 +146,7 @@ export default function Wardrobe() {
             className="w-[200px] h-[200px] relative rounded-md shadow-sm bg-white flex items-center overflow-hidden"
           >
             <Image
-              src={imagePath + `${index}.jpg`}
+              src={imagePath + `${imageFilenames[index]}`}
               alt={`Loaded Image ${index}`}
               width={200}
               height={200}
