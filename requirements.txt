@@ -4,3 +4,7 @@ Flask==2.2.2
 flask-cors==4.0.0
 requests==2.31.0
 openai==1.23.2
+pillow==10.3.0
+torch==2.3.0
+vbpr-pytorch==0.1.2
+torchvision==0.18.0
