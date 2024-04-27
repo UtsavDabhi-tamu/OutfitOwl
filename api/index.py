@@ -677,9 +677,9 @@ def run_vbpr(items_to_rec, profile="Basic"):
             and tensor_specific_subset
             or tensor_general_subset
         )
-        print("Specific Subset:", tensor_specific_subset)
-        print("General Subset:", tensor_general_subset)
-        print("Image Subset:", tensor_subset)
+        # print("Specific Subset:", tensor_specific_subset)
+        # print("General Subset:", tensor_general_subset)
+        print("Tensor Subset:", tensor_subset)
         image_name = random.choice(tensor_subset)[: -len("_features.pt")] + ".jpg"
         images_to_rec.append(image_name)
 
@@ -687,6 +687,7 @@ def run_vbpr(items_to_rec, profile="Basic"):
 
     # for category in items_to_rec:
     #     images_to_rec[category] = []
+    
     #     for tensor_name in category_lists[reverse_combined_categories[category]]:
     #         images_to_rec[category].append(tensor_name[: -len("_features.pt")] + ".jpg")
 
