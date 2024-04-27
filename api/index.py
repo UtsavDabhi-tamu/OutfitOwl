@@ -8,6 +8,7 @@ import pickle
 from PIL import Image
 import torch
 from torch import nn
+from vbpr import VBPR, Trainer
 import torchvision.transforms as transforms
 import torchvision.models as models
 import random
@@ -17,19 +18,708 @@ app = Flask(__name__)
 # Allow cross-origin requests
 CORS(app)
 
-basic_preferences = [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 
-                    1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 
-                    0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 
-                    0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 
-                    1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 
-                    0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 
-                    0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 
-                    0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 
-                    1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 
-                    0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 
-                    0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 
-                    1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 
-                    0, 1, 1, 1, 0]
+profile_vbpr = {
+    "Basic": "api/Basic.pkl",
+    "Michael": "api/Michael.pkl",
+    "Floral": "api/Floral.pkl",
+}
+profile_preferences = {
+    "Basic": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+    ],
+    "Michael": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+    ],
+    "Floral": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ],
+}
+
+combined_categories = {
+    "Top": ["Blouse", "Tee", "Top"],
+    "Jeans": ["Jeans", "Leggings", "Leggings", "Sweatpants"],
+    "Shorts": ["Shorts", "Cutoffs"],
+    "Jacket": ["Blazer", "Coat", "Hoodie", "Jacket"],
+    "Skirt": ["Skirt"],
+    "Sweater": ["Sweater"],
+}
+
+reverse_combined_categories = {
+    "Blouse": "Top",
+    "Tee": "Top",
+    "Top": "Top",
+    "Jeans": "Jeans",
+    "Leggings": "Jeans",
+    "Sweatpants": "Jeans",
+    "Shorts": "Shorts",
+    "Cutoffs": "Shorts",
+    "Blazer": "Jacket",
+    "Coat": "Jacket",
+    "Hoodie": "Jacket",
+    "Jacket": "Jacket",
+    "Skirt": "Skirt",
+    "Sweater": "Sweater",
+}
 
 
 @app.route("/api/store_preferences", methods=["POST"])
@@ -41,20 +731,6 @@ def user_preferences():
 
 
 def get_sim_image(category, profile="Basic"):
-    # combined_categories = {
-    #     "Top": ["Blouse", "Tee", "Top"],
-    #     "Jeans": ["Jeans", "Leggings", "Leggings", "Sweatpants"],
-    #     "Shorts": ["Shorts", "Cutoffs"],
-    #     "Jacket": ["Blazer", "Coat", "Hoodie", "Jacket"],
-    #     "Skirt": ["Skirt"],
-    #     "Sweater": ["Sweater"],
-    # }
-    # categories = combined_categories[category]
-
-    # Add other profiles later
-    profile_preferences = {
-        "Basic": basic_preferences,
-    }
     user_preferences = profile_preferences[profile]
 
     image_directory = "public/images/preferences"
@@ -62,71 +738,151 @@ def get_sim_image(category, profile="Basic"):
 
     for root, dirs, files in os.walk(image_directory):
         for i, file in enumerate(files):
-            # if file.lower().endswith(".jpg") and any(category in file for category in categories) and user_preferences[i] == 1:
-            if file.lower().endswith(".jpg") and category in file and user_preferences[i] == 1:
+            if (
+                file.lower().endswith(".jpg")
+                and category in file
+                and user_preferences[i] == 1
+            ):
                 images.append(file)
-    
+
     sim_image = random.choice(images)
     return sim_image
 
 
-# items_to_rec ex. ['Top', 'Shorts']
+# items_to_rec ex. ['Tee', 'Shorts']
 def run_vbpr(items_to_rec, profile="Basic"):
-    profile_vbpr = {"Basic": "basic_vbpr.pkl"}
+    if profile not in profile_vbpr:
+        profile = "Basic"
     vbpr_file_name = profile_vbpr[profile]
-    
+
     trainer = None
-    with open(vbpr_file_name, 'rb') as f:
+    with open(vbpr_file_name, "rb") as f:
         trainer = pickle.load(f)
 
+    # Get feature from similar image
+    query_img_features = torch.load(
+        "api/preference_features/"
+        + get_sim_image(items_to_rec[1], profile)[: -len(".jpg")]
+        + "_features.pt"
+    )
+
+    # Query image features reshaped and appended
+    query_img_features = query_img_features.reshape(1, -1)
+    original_features = trainer.model.features.weight.data.clone()
+    features_with_query = torch.cat([original_features, query_img_features], dim=0)
+    print(features_with_query.shape)
+    trainer.model.features = nn.Embedding.from_pretrained(
+        features_with_query, freeze=True
+    )
+
+    # Update all item-dependent embeddings to include the new item
+    original_gamma_items = trainer.model.gamma_items.weight.data.clone()
+    new_gamma_items = torch.cat(
+        [
+            original_gamma_items,
+            torch.zeros(
+                1,
+                original_gamma_items.size(1),
+                device=trainer.model.gamma_items.weight.device,
+            ),
+        ],
+        dim=0,
+    )
+    trainer.model.gamma_items = nn.Embedding.from_pretrained(
+        new_gamma_items, freeze=False
+    )
+
+    original_beta_items = trainer.model.beta_items.weight.data.clone()
+    new_beta_items = torch.cat(
+        [
+            original_beta_items,
+            torch.zeros(1, 1, device=trainer.model.beta_items.weight.device),
+        ],
+        dim=0,
+    )
+    trainer.model.beta_items = nn.Embedding.from_pretrained(
+        new_beta_items, freeze=False
+    )
+
+    # Setup indices for model input
+    device = next(trainer.model.parameters()).device
+    user_index = torch.tensor([[0]], device=device)
+
+    # Compute similarity scores with the updated model
+    items_indices = torch.arange(features_with_query.size(0), device=device).unsqueeze(
+        0
+    )
+    scores = trainer.model.recommend(user_index, items_indices)
+
+    # Extract and print top recommendations
+    top_scores, top_indices = torch.topk(scores.squeeze(), 50)
+
+    # Remove prefernce images from top indices
+    top_indices = top_indices[top_indices != (features_with_query.size(0) - 1)]
+
+    # print(f"Top recommended item indices:", top_indices)
+
+    # Restore the original state of the trainer's model
+    trainer.model.features = nn.Embedding.from_pretrained(
+        original_features, freeze=True
+    )
+    trainer.model.gamma_items = nn.Embedding.from_pretrained(
+        original_gamma_items, freeze=False
+    )
+    trainer.model.beta_items = nn.Embedding.from_pretrained(
+        original_beta_items, freeze=False
+    )
+
+    # Get image from top recommended item
+    # top_indices[0]
+    # first 221 are preferences
+    # next 1000 are wardrobe
+    tensor_names = None
+    with open("api/TensorCodex.pkl", "rb") as f:
+        tensor_names = pickle.load(f)
+
+    # Initialize lists for each category
+    category_lists = {
+        "Top": [],
+        "Jeans": [],
+        "Shorts": [],
+        "Jacket": [],
+        "Skirt": [],
+        "Sweater": [],
+    }
+
+    # Function to map tensor names to categories
+    def map_tensor_to_category(tensor_name):
+        for main_category, subcategories in combined_categories.items():
+            for subcategory in subcategories:
+                if subcategory.lower() in tensor_name.lower():
+                    return main_category
+        return None
+
+    # Populate the category lists using top_indices
+    for index in top_indices:
+        tensor_name = tensor_names[index]
+        category = map_tensor_to_category(tensor_name)
+        if category:
+            category_lists[category].append(tensor_name)
+
+    # images_to_rec = []
+
+    # for category in items_to_rec:
+    #     tensor_name = random.choice(
+    #         category_lists[reverse_combined_categories[category]]
+    #     )
+    #     images_to_rec.append(tensor_name[: -len("_features.pt")] + ".jpg")
+
+    images_to_rec = {}
 
     for category in items_to_rec:
-        # Get feature from similar image
-        sim_image = get_sim_image(category, profile)
-        query_img_features = trainer.get_image_feature("preference_features/"+sim_image[:-4]+".pt")
+        images_to_rec[category] = []
+        for tensor_name in category_lists[reverse_combined_categories[category]]:
+            images_to_rec[category].append(tensor_name[: -len("_features.pt")] + ".jpg")
 
-        # Query image features reshaped and appended
-        query_img_features = query_img_features.reshape(1, -1)
-        original_features = trainer.model.features.weight.data.clone()
-        features_with_query = torch.cat([original_features, query_img_features], dim=0)
-        print(features_with_query.shape)
-        trainer.model.features = nn.Embedding.from_pretrained(features_with_query, freeze=True)
+    return images_to_rec
 
-        # Update all item-dependent embeddings to include the new item
-        original_gamma_items = trainer.model.gamma_items.weight.data.clone()
-        new_gamma_items = torch.cat([original_gamma_items, torch.zeros(1, original_gamma_items.size(1), device=trainer.model.gamma_items.weight.device)], dim=0)
-        trainer.model.gamma_items = nn.Embedding.from_pretrained(new_gamma_items, freeze=False)
-
-        original_beta_items = trainer.model.beta_items.weight.data.clone()
-        new_beta_items = torch.cat([original_beta_items, torch.zeros(1, 1, device=trainer.model.beta_items.weight.device)], dim=0)
-        trainer.model.beta_items = nn.Embedding.from_pretrained(new_beta_items, freeze=False)
-
-        # Setup indices for model input
-        device = next(trainer.model.parameters()).device
-        user_index = torch.tensor([[0]], device=device)
-
-        # Compute similarity scores with the updated model
-        items_indices = torch.arange(features_with_query.size(0), device=device).unsqueeze(0)
-        scores = trainer.model.recommend(user_index, items_indices)
-
-        # Extract and print top recommendations
-        top_scores, top_indices = torch.topk(scores.squeeze(), 2)
-        top_indices = top_indices[top_indices != (features_with_query.size(0) - 1)]
-
-        print("Top recommended item indices:", top_indices)
-
-        # Restore the original state of the trainer's model
-        trainer.model.features = nn.Embedding.from_pretrained(original_features, freeze=True)
-        trainer.model.gamma_items = nn.Embedding.from_pretrained(original_gamma_items, freeze=False)
-        trainer.model.beta_items = nn.Embedding.from_pretrained(original_beta_items, freeze=False)
-
-        # Get image from top recommended item
-        # top_indices[0]
-
-
-
-def get_user_preference():
-    pass
 
 @app.route("/api/get_data", methods=["POST"])
 def get_data():
@@ -138,16 +894,15 @@ def get_data():
     plans = data["plans"]
 
     profile = data["profile"]
-    clothing_prefs = profile["clothing_prefs"]
+    clothing_prefs = data["clothing_prefs"]
 
     response = query_gpt(weather_data, clothing_prefs, plans)
 
     items_to_rec = [item for item in response.split("|") if item != ""]
-    print(items_to_rec)
-    run_vbpr(items_to_rec, profile)
+    print("Items to Recommend:", items_to_rec)
+    images_to_rec = run_vbpr(items_to_rec, profile)
 
-    # return jsonify(weather_data)
-    return jsonify(items_to_rec)
+    return jsonify(images_to_rec)
 
 
 # METHOD TO GET WEATHER DATA

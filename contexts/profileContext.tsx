@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface ProfileContextType {
-  selectedProfile: string | undefined;
-  setSelectedProfile: (profile: string | undefined) => void;
+  selectedProfile: string;
+  setSelectedProfile: (profile: string) => void;
   profiles: string[];
   setProfiles: (profiles: string[]) => void;
   profileTypes: Map<string, string>;
@@ -22,13 +22,11 @@ interface ProfileProviderProps {
 export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   children,
 }) => {
-  const [selectedProfile, setSelectedProfile] = useState<string | undefined>(
-    "Basic"
-  );
+  const [selectedProfile, setSelectedProfile] = useState<string>("Basic");
   const [profiles, setProfiles] = useState<string[]>([
     "Basic",
     "Michael",
-    "Preppy",
+    "Floral",
     "Sporty",
     "Casual",
     "Formal",
@@ -37,7 +35,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
     new Map([
       ["Basic", "All"],
       ["Michael", "Masculine"],
-      ["Preppy", "Masculine"],
+      ["Floral", "Feminine"],
       ["Sporty", "Feminine"],
       ["Casual", "Masculine"],
       ["Formal", "Feminine"],
@@ -75,7 +73,21 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
           0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
         ],
       ],
-      ["Preppy", Array(221).fill(0)],
+      [
+        "Floral",
+        [
+          0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+          0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+          0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+          0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0,
+          0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ],
+      ],
       ["Sporty", Array(221).fill(0)],
       ["Casual", Array(221).fill(0)],
       ["Formal", Array(221).fill(0)],

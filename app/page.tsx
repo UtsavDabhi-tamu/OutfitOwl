@@ -14,7 +14,7 @@ export default function Home() {
   const [zipCode, setZipCode] = useState("");
   const [specialPlans, setSpecialPlans] = useState("");
 
-  const { selectedProfile, setSelectedProfile, profiles, setProfiles } =
+  const { selectedProfile, profiles, profileTypes } =
     useProfile();
 
   const [isOuterLayer, setIsOuterLayer] = useState(true);
@@ -24,6 +24,7 @@ export default function Home() {
     console.log("Zip Code:", zipCode);
     console.log("Special Plans:", specialPlans);
     console.log("Profile:", selectedProfile);
+    console.log("Profile Type:", profileTypes.get(selectedProfile));
 
     fetch('http://127.0.0.1:5328/api/get_data', {
       method: 'POST',
@@ -32,6 +33,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         profile: selectedProfile,
+        clothing_prefs: profileTypes.get(selectedProfile),
         zipcode: zipCode,
         plans: specialPlans
       })
