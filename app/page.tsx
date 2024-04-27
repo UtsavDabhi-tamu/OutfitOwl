@@ -4,45 +4,63 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import * as React from "react";
 import ProfileSelector from "@/components/profile-selector";
 import { useProfile } from "@/contexts/profileContext";
+import { set } from "date-fns";
 
 export default function Home() {
   const [zipCode, setZipCode] = useState("");
   const [specialPlans, setSpecialPlans] = useState("");
 
-  const { selectedProfile, setSelectedProfile, profiles, setProfiles } =
-    useProfile();
+  const { selectedProfile, profiles, profileTypes } = useProfile();
 
-  const [isOuterLayer, setIsOuterLayer] = useState(true);
+  const [lowerBodyArticle, setLowerBodyArticle] = useState(
+    "/images/preferences/Jeans_Solid_2_91.jpg"
+  );
+  const [upperBodyArticle, setUpperBodyArticle] = useState(
+    "/images/preferences/Tee_Cotton_0_175.jpg"
+  );
+  const [outerArticle, setOuterArticle] = useState(
+    "/images/preferences/Blazer_Denim_0_0.jpg"
+  );
+
+  const [loading, setLoading] = useState(false);
 
   const generateOutfit = () => {
+    setLoading(true);
     console.log("Generating outfit with the following details:");
     console.log("Zip Code:", zipCode);
     console.log("Special Plans:", specialPlans);
     console.log("Profile:", selectedProfile);
+    console.log("Profile Type:", profileTypes.get(selectedProfile));
 
-    fetch('http://127.0.0.1:5328/api/get_data', {
-      method: 'POST',
+    fetch("http://127.0.0.1:5328/api/get_data", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         profile: selectedProfile,
+        clothing_prefs: profileTypes.get(selectedProfile),
         zipcode: zipCode,
-        plans: specialPlans
+        plans: specialPlans,
+      }),
+    })
+      .then((response) => response.json())
+      .then((outfit) => {
+        console.log(outfit);
+        setLowerBodyArticle("/images/wardrobe/" + outfit[0]);
+        setUpperBodyArticle("/images/wardrobe/" + outfit[1]);
+        if (outfit.length > 2) setOuterArticle("/images/wardrobe/" + outfit[2]);
+        else setOuterArticle("");
       })
-    }).then(response => response.json())
-      .then(data => {
-        console.log(data)
-        setIsOuterLayer(!isOuterLayer);
-      })
-      .catch(err => {
-        console.log(err)
+      .catch((err) => {
+        console.log(err);
       });
+    setLoading(false);
   };
 
   return (
@@ -104,69 +122,75 @@ export default function Home() {
       <Separator orientation="vertical" className="my-auto h-5/6" />
       <div className="w-5/12">
         <div className="container flex items-center justify-center h-full p-4">
-          {isOuterLayer ? (
-            <div className="grid h-full grid-cols-2 gap-4">
-              <div className="flex justify-center">
-                <Image
-                  src="/images/shirt.jfif"
-                  alt="Upper Body"
-                  width={200}
-                  height={200}
-                  className="max-h-[250px]"
-                  style={{
-                    width: "auto",
-                  }}
-                />
-              </div>
-              <div className="flex justify-center row-start-2">
-                <Image
-                  src="/images/pants.jfif"
-                  alt="Lower Body"
-                  width={200}
-                  height={200}
-                  className="max-h-[250px]"
-                  style={{
-                    width: "auto",
-                  }}
-                />
-              </div>
-              <div className="flex items-center col-start-2 row-span-2">
-                <Image
-                  src="/images/jacket.jpg"
-                  alt="Outer Upper Body Layer"
-                  width={200}
-                  height={200}
-                  className="max-h-[250px]"
-                />
-              </div>
-            </div>
+          {loading ? (
+            <p>Loading...</p>
           ) : (
-            <div className="grid gap-4">
-              <div className="flex items-center">
-                <Image
-                  src="/images/shirt.jfif"
-                  alt="Upper Body"
-                  width={200}
-                  height={200}
-                  className="max-h-[250px]"
-                  style={{
-                    width: "auto",
-                  }}
-                />
-              </div>
-              <div className="flex items-center justify-center row-start-2">
-                <Image
-                  src="/images/pants.jfif"
-                  alt="Lower Body"
-                  width={200}
-                  height={200}
-                  className="max-h-[250px]"
-                  style={{
-                    width: "auto",
-                  }}
-                />
-              </div>
-            </div>
+            <>
+              {outerArticle != "" ? (
+                <div className="grid h-full grid-cols-2 gap-4">
+                  <div className="flex justify-center">
+                    <Image
+                      src={upperBodyArticle}
+                      alt="Upper Body"
+                      width={200}
+                      height={200}
+                      className="max-h-[250px]"
+                      style={{
+                        width: "auto",
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-center row-start-2">
+                    <Image
+                      src={lowerBodyArticle}
+                      alt="Lower Body"
+                      width={200}
+                      height={200}
+                      className="max-h-[250px]"
+                      style={{
+                        width: "auto",
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center col-start-2 row-span-2">
+                    <Image
+                      src={outerArticle}
+                      alt="Outer Upper Body Layer"
+                      width={200}
+                      height={200}
+                      className="max-h-[250px]"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  <div className="flex items-center">
+                    <Image
+                      src={upperBodyArticle}
+                      alt="Upper Body"
+                      width={200}
+                      height={200}
+                      className="max-h-[250px]"
+                      style={{
+                        width: "auto",
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-center row-start-2">
+                    <Image
+                      src={lowerBodyArticle}
+                      alt="Lower Body"
+                      width={200}
+                      height={200}
+                      className="max-h-[250px]"
+                      style={{
+                        width: "auto",
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

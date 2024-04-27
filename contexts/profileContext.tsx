@@ -3,12 +3,14 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface ProfileContextType {
-  selectedProfile: string | undefined;
-  setSelectedProfile: (profile: string | undefined) => void;
+  selectedProfile: string;
+  setSelectedProfile: (profile: string) => void;
   profiles: string[];
   setProfiles: (profiles: string[]) => void;
   profileTypes: Map<string, string>;
   setProfileTypes: (profileTypes: Map<string, string>) => void;
+  profileLikes: Map<string, number[]>;
+  setProfileLikes: (profileTypes: Map<string, number[]>) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -20,23 +22,58 @@ interface ProfileProviderProps {
 export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   children,
 }) => {
-  const [selectedProfile, setSelectedProfile] = useState<string | undefined>();
+  const [selectedProfile, setSelectedProfile] = useState<string>("Basic");
   const [profiles, setProfiles] = useState<string[]>([
     "Basic",
-    "Goth",
-    "Preppy",
+    "Patterns",
     "Sporty",
     "Casual",
     "Formal",
   ]);
   const [profileTypes, setProfileTypes] = useState<Map<string, string>>(
     new Map([
-      ["Basic", "All"],
-      ["Goth", "Feminine"],
-      ["Preppy", "Masculine"],
+      ["Basic", "Masculine"],
+      ["Patterns", "Feminine"],
       ["Sporty", "Feminine"],
       ["Casual", "Masculine"],
-      ["Formal", "Masculine"],
+      ["Formal", "Feminine"],
+    ])
+  );
+  const [profileLikes, setProfileLikes] = useState<Map<string, number[]>>(
+    new Map([
+      [
+        "Basic",
+        [
+          1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+          0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
+          1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1,
+          0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0,
+          1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+          0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+          0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
+          1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
+          0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
+        ],
+      ],
+      [
+        "Patterns",
+        [
+          0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+          0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+          0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+          0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0,
+          0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ],
+      ],
+      ["Sporty", Array(221).fill(0)],
+      ["Casual", Array(221).fill(0)],
+      ["Formal", Array(221).fill(0)],
     ])
   );
 
@@ -49,8 +86,9 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
         setProfiles,
         profileTypes,
         setProfileTypes,
-      }}
-    >
+        profileLikes,
+        setProfileLikes,
+      }}>
       {children}
     </ProfileContext.Provider>
   );
