@@ -121,14 +121,14 @@ export default function Home() {
       </div>
       <Separator orientation="vertical" className="my-auto h-5/6" />
       <div className="w-5/12">
-        <div className="container flex items-center justify-center h-full p-4">
+        <div className="container flex items-center justify-center h-full p-0">
           {loading ? (
             <p>Loading...</p>
           ) : (
             <>
               {outerArticle != "" ? (
-                <div className="grid grid-cols-2 gap-4 min-h-[550px]">
-                  <div className="flex items-center min-w-[200px] my-0">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex min-w-[200px]">
                     <Image
                       src={upperBodyArticle}
                       alt="Upper Body"
@@ -141,7 +141,7 @@ export default function Home() {
                       }}
                     />
                   </div>
-                  <div className="flex justify-center row-start-2 min-w-[200px]">
+                  <div className="flex row-start-2 min-w-[200px]">
                     <Image
                       src={lowerBodyArticle}
                       alt="Lower Body"
@@ -176,7 +176,7 @@ export default function Home() {
                       alt="Upper Body"
                       width={200}
                       height={200}
-                      className="max-h-[250px] justify-self-center"
+                      className="max-h-[250px]  min-h-[200px] justify-self-center"
                       style={{
                         width: "auto",
                         margin: "auto",
@@ -189,7 +189,7 @@ export default function Home() {
                       alt="Lower Body"
                       width={200}
                       height={200}
-                      className="max-h-[250px]"
+                      className="max-h-[250px] min-h-[200px]"
                       style={{
                         width: "auto",
                         margin: "auto",
