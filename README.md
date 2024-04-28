@@ -1,56 +1,39 @@
-<p align="center">
-  <a href="https://nextjs-flask-starter.vercel.app/">
-    <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" height="96">
-    <h3 align="center">Next.js Flask Starter</h3>
-  </a>
-</p>
+# Step 1: Install Python (skip if already installed)
 
-<p align="center">Simple Next.js boilerplate that uses <a href="https://flask.palletsprojects.com/">Flask</a> as the API backend.</p>
-
-<br/>
-
-## Introduction
-
-This is a hybrid Next.js + Python app that uses Next.js as the frontend and Flask as the API backend. One great use case of this is to write Next.js apps that use Python AI libraries on the backend.
-
-## How It Works
-
-The Python/Flask server is mapped into to Next.js app under `/api/`.
-
-This is implemented using [`next.config.js` rewrites](https://github.com/vercel/examples/blob/main/python/nextjs-flask/next.config.js) to map any request to `/api/:path*` to the Flask API, which is hosted in the `/api` folder.
-
-On localhost, the rewrite will be made to the `127.0.0.1:5328` port, which is where the Flask server is running.
-
-In production, the Flask server is hosted as [Python serverless functions](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python) on Vercel.
-
-## Demo
-
-https://nextjs-flask-starter.vercel.app/
-
-## Getting Started
-
-First, install the dependencies:
-
+**MAC:**
 ```bash
-npm install
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew update
+brew install python
+python3 --version
 ```
 
-Then, run the development server:
-
+**Ubuntu:**
 ```bash
+sudo apt update
+sudo apt install python3
+python3 --version
+```
+
+# Step 2: Install NVM (Node Version Manager)
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+```
+Shut down this terminal and open a new one. Then type:
+```bash
+nvm install v18.17.1
+```
+Troubleshoot - https://github.com/nvm-sh/nvm?tab=readme-ov-file
+
+# Step 3: Download pre-trained models from Google Drive
+[Basic.pkl](https://drive.google.com/file/d/1Co3XbMyFDaCSNZr27__y8rddVxYCRt9n/view?usp=share_link)<br>
+[Patterns.pkl](https://drive.google.com/file/d/1Cpm3ndRxyJxIsC31SxrNG4z1x-dyklJL/view?usp=share_link)<br>
+Move the `.pkl` files to `api/` directory
+
+# Step 4: Install Dependencies and Run the Application
+```bash
+npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-The Flask server will be running on [http://127.0.0.1:5328](http://127.0.0.1:5328) – feel free to change the port in `package.json` (you'll also need to update it in `next.config.js`).
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Flask Documentation](https://flask.palletsprojects.com/en/1.1.x/) - learn about Flask features and API.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Your application is running at http://localhost:3000
