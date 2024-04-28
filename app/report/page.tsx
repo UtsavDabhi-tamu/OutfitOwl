@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 const questions = [
   {
     id: 1,
@@ -68,47 +70,123 @@ const questions = [
   },
   {
     id: 4,
-    question: `What's the secret behind OutfitOwl's recommendations?`,
+    question: `OutfitOwl's Secret Sauce?`,
     answer: [
-      `OutfitOwl uses an advanced algorithm called Visual Bayesian Personalized
-      Ranking (VBPR) to combine visual understanding with personalized recommendations.`,
-      `This means it can analyze images of clothing and match them to your style preferences,
-      creating outfits tailored just for you! VBPR is an extension of the Bayesian
-      Personalized Ranking (BPR) algorithm, which is a popular approach for personalized
-      recommendation systems.`,
+      `OutfitOwl employs a cutting-edge, multi-pronged approach to deliver personalized 
+      and weather-appropriate outfit recommendations. At the core of our solution lies 
+      a powerful combination of advanced algorithms, deep learning techniques, and seamless 
+      integration with external data sources.`,
     ],
     details: [
       {
         id: 1,
-        title: `BPR`,
+        title: `Visual Bayesian Personalized Ranking (VBPR)`,
         description: [
-          `BPR is a pairwise ranking model that aims to rank the items that a 
-          user prefers higher than the ones they don't prefer. It works by analyzing the
-          user's past interactions (e.g., purchases, ratings, clicks) and learns to rank 
-          the items accordingly.`,
-          `In the context of outfit recommendations, BPR would analyze 
-          the clothing items you've previously liked or disliked and try to rank the outfits 
-          you're more likely to prefer higher than the ones you might not like.`,
-          `However, BPR doesn't take into account the visual aspects of the items being 
-          recommended. This is where VBPR comes into play.`,
+          `We harness the power of VBPR, a state-of-the-art algorithm that amalgamates 
+          visual understanding with personalized ranking. This sophisticated model analyzes 
+          the visual features of clothing items, such as color, pattern, and style, and 
+          integrates them with users' style preferences to generate highly tailored outfit 
+          recommendations.`,
         ],
       },
       {
         id: 2,
-        title: "VBPR",
+        title: `Deep Learning for Visual Feature Extraction`,
         description: [
-          `VBPR incorporates visual features extracted from images of the clothing
-          items into the ranking model. It uses deep learning techniques to analyze the visual
-          characteristics of the clothing items, such as color, pattern, style, and texture.
-          By combining the visual features with your style preferences, VBPR can more accurately 
-          rank and recommend outfits that not only match your tastes but also have the desired 
-          visual aesthetics.`,
-          `For example, if you tend to prefer floral patterns and bright colors, VBPR can 
-          identify those visual characteristics in clothing images and rank outfits with similar 
-          patterns and colors higher in your personalized recommendations.`,
-          `In essence, VBPR combines the power of personalized ranking algorithms with computer 
-          vision techniques, resulting in a more sophisticated and visually-aware recommendation 
-          system tailored to your unique fashion preferences.`,
+          `To enable VBPR's visual comprehension capabilities, we employ a deep learning model 
+          based on the VGG19 convolutional neural network architecture. This model is trained 
+          on the DeepFashion dataset, a comprehensive collection of fashion images, allowing 
+          it to accurately extract and comprehend visual features from clothing items.`,
+        ],
+      },
+      {
+        id: 3,
+        title: `Preference Dataset Development`,
+        description: [
+          `We create a dedicated preference dataset by leveraging user input on their style 
+          preferences across various clothing categories. This dataset serves as a crucial 
+          training resource for our VBPR model, enabling it to learn and adapt to individual 
+          fashion tastes and preferences.`,
+        ],
+      },
+      {
+        id: 4,
+        title: `Weather Data Integration`,
+        description: [
+          `OutfitOwl seamlessly integrates with reliable weather APIs to fetch real-time 
+          weather data for users' locations. This information is then passed to our trusty 
+          AI assistant, ChatGPT, which provides expert guidance on suitable apparel options 
+          based on the weather conditions and occasion.`,
+        ],
+      },
+      {
+        id: 5,
+        title: `Ensemble Recommendation`,
+        description: [
+          `The visual features extracted by our deep learning model, user preferences, and 
+          ChatGPT's weather-based recommendations are seamlessly combined by the VBPR algorithm. 
+          This ensemble approach ensures that the final outfit suggestions not only align with 
+          users' styles but also account for the practical considerations of weather and occasion.`,
+        ],
+      },
+    ],
+    img: `/images/flowchart.png`,
+  },
+  {
+    id: 5,
+    question: `How OutfitOwl stands out!`,
+    answer: [
+      `Whereas existing fashion recommendation systems primarily focus on either visual similarity 
+      or collaborative filtering techniques, OutfitOwl takes an innovative multi-modal approach by 
+      seamlessly integrating visual analysis, personal style preferences, and contextual weather 
+      data.`,
+    ],
+    details: [
+      {
+        id: 1,
+        title: ``,
+        description: [
+          `Vasileva et al. [4] proposed a fashion recommendation system that uses visual similarity 
+          between clothing items to recommend outfits. They employed convolutional neural networks 
+          (CNNs) to extract visual features from images and used them to calculate visual similarity 
+          scores for outfit recommendations.`,
+        ],
+      },
+      {
+        id: 2,
+        title: ``,
+        description: [
+          `Thao et al. [5] developed a personalized fashion recommendation system that combines visual 
+          features from product images with textual information (e.g., descriptions, reviews). They 
+          used an attention mechanism to adaptively focus on relevant visual and textual features for 
+          each user's preferences.`,
+        ],
+      },
+      {
+        id: 3,
+        title: ``,
+        description: [
+          `Kang et al. [12] proposed a fashion recommendation system that learns a joint visual-semantic 
+          embedding space. This allows the system to capture both visual and semantic similarities between 
+          clothing items, and recommend items based on their proximity in this embedding space.`,
+        ],
+      },
+      {
+        id: 4,
+        title: ``,
+        description: [
+          `Zhang et al. [13] introduced a visual-aware collaborative filtering (VACF) approach for fashion 
+          recommendation. They used CNNs to extract visual features from clothing images and combined them 
+          with user-item interaction data in a collaborative filtering framework.`,
+        ],
+      },
+      {
+        id: 5,
+        title: ``,
+        description: [
+          `Tan et al. [14] proposed a deep visual-semantics hashing approach that learns compact binary 
+          codes from both visual and textual data for efficient fashion recommendation. This enables fast 
+          retrieval of visually and semantically similar fashion items.`,
         ],
       },
     ],
@@ -160,7 +238,7 @@ export default function Report() {
               </ol>
             )}
             {ques.details && (
-              <ul className="list-disc pl-10">
+              <ol className="list-decimal pl-5">
                 {ques.details.map((item) => {
                   return (
                     <li key={item.id} className="pt-5">
@@ -176,7 +254,16 @@ export default function Report() {
                     </li>
                   );
                 })}
-              </ul>
+              </ol>
+            )}
+            {ques.img && (
+              <Image
+                src={ques.img}
+                alt={`System flowchart`}
+                width={800}
+                height={300}
+                className="p-5"
+              />
             )}
           </div>
         );
