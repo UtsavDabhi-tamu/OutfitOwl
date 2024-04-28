@@ -596,7 +596,7 @@ def run_vbpr(items_to_rec, profile="Basic"):
     scores = trainer.model.recommend(user_index, items_indices)
 
     # Extract and print top recommendations
-    top_scores, top_indices = torch.topk(scores.squeeze(), 50)
+    top_scores, top_indices = torch.topk(scores.squeeze(), 80)
 
     # Remove prefernce images from top indices
     top_indices = top_indices[top_indices != (features_with_query.size(0) - 1)]
@@ -788,7 +788,7 @@ def query_gpt(weather_data, clothing_prefs, plans):
                 "role": "user",
                 "content": f"""
                     The weather data of my location for the day is this {weather_data} and my plans for the day are {plans}.
-                    Unless otherwise stated, I am going outside in the daytime and normally only wear jackets unless occasion or weather requires it.
+                    Unless otherwise stated, I am going outside in the daytime and normally only wear upper body outerwear under 60 degrees unless occasion or weather absolutely requires it.
                     If my plans typically require conforming to a dress code, please recommend accordingly.
                     My clothing preferences are these - {clothing_prefs}
                     What types of clothes should I wear today? Your response should include each major article of clothing I should wear with no other text. 
