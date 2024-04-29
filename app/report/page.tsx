@@ -146,17 +146,14 @@ const questions = [
         id: 1,
         title: ``,
         description: [
-          `Vasileva et al. [4] proposed a fashion recommendation system that uses visual similarity 
-          between clothing items to recommend outfits. They employed convolutional neural networks 
-          (CNNs) to extract visual features from images and used them to calculate visual similarity 
-          scores for outfit recommendations.`,
+          `Vasileva et el proposed a method of learning fashion by developing pairwise projections for each fashion choice within existing outfits. Compatibility scores were computed for pairs of fashion items to determine which types of clothing would go well together. This would determine which types fashion items would work well in a full outfit.`,
         ],
       },
       {
         id: 2,
         title: ``,
         description: [
-          `Thao et al. [5] developed a personalized fashion recommendation system that combines visual 
+          `Thao et al. developed a personalized fashion recommendation system that combines visual 
           features from product images with textual information (e.g., descriptions, reviews). They 
           used an attention mechanism to adaptively focus on relevant visual and textual features for 
           each user's preferences.`,
@@ -166,7 +163,7 @@ const questions = [
         id: 3,
         title: ``,
         description: [
-          `Kang et al. [12] proposed a fashion recommendation system that learns a joint visual-semantic 
+          `Kang et al. proposed a fashion recommendation system that learns a joint visual-semantic 
           embedding space. This allows the system to capture both visual and semantic similarities between 
           clothing items, and recommend items based on their proximity in this embedding space.`,
         ],
@@ -175,7 +172,7 @@ const questions = [
         id: 4,
         title: ``,
         description: [
-          `Zhang et al. [13] introduced a visual-aware collaborative filtering (VACF) approach for fashion 
+          `Zhang et al. introduced a visual-aware collaborative filtering (VACF) approach for fashion 
           recommendation. They used CNNs to extract visual features from clothing images and combined them 
           with user-item interaction data in a collaborative filtering framework.`,
         ],
@@ -184,7 +181,7 @@ const questions = [
         id: 5,
         title: ``,
         description: [
-          `Tan et al. [14] proposed a deep visual-semantics hashing approach that learns compact binary 
+          `Tan et al. proposed a deep visual-semantics hashing approach that learns compact binary 
           codes from both visual and textual data for efficient fashion recommendation. This enables fast 
           retrieval of visually and semantically similar fashion items.`,
         ],
@@ -207,67 +204,69 @@ export default function Report() {
         </p>
       </div>
 
-      {/* Q&A */}
-      {questions.map((ques) => {
-        return (
-          <div key={ques.id} className="w-1/2 py-12 mx-auto space-y-0">
-            <h2 className="text-xl font-semibold">{ques?.question}</h2>
-            {ques.answer &&
-              ques.answer.map((line, index) => {
-                return (
-                  <p key={index} className="pb-2">
-                    {line}
-                  </p>
-                );
-              })}
-            {ques.timeline && (
-              <ol className="relative border-s border-gray-600 dark:border-gray-700">
-                {ques.timeline.map((step) => {
+      <div className="w-3/4 bg-white mx-auto px-8 rounded-lg mb-8">
+        {/* Q&A */}
+        {questions.map((ques) => {
+          return (
+            <div key={ques.id} className="py-12 mx-auto space-y-0">
+              <h2 className="text-xl font-semibold">{ques?.question}</h2>
+              {ques.answer &&
+                ques.answer.map((line, index) => {
                   return (
-                    <li key={step.id} className="ms-4 pt-5 pb-5">
-                      <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-black dark:border-gray-900 dark:bg-gray-700"></div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {step.title}
-                      </h3>
-                      <p className="text-base font-normal text-gray-500 dark:text-gray-400">
-                        {step.description}
-                      </p>
-                    </li>
+                    <p key={index} className="pb-2">
+                      {line}
+                    </p>
                   );
                 })}
-              </ol>
-            )}
-            {ques.details && (
-              <ol className="list-decimal pl-5">
-                {ques.details.map((item) => {
-                  return (
-                    <li key={item.id} className="pt-5">
-                      <h1 className="text-md font-semibold">{item.title}</h1>
-                      {item.description &&
-                        item.description.map((line, index) => {
-                          return (
-                            <p key={index} className="pb-2">
-                              {line}
-                            </p>
-                          );
-                        })}
-                    </li>
-                  );
-                })}
-              </ol>
-            )}
-            {ques.img && (
-              <Image
-                src={ques.img}
-                alt={`System flowchart`}
-                width={800}
-                height={300}
-                className="p-5"
-              />
-            )}
-          </div>
-        );
-      })}
+              {ques.timeline && (
+                <ol className="relative border-s border-gray-600 dark:border-gray-700">
+                  {ques.timeline.map((step) => {
+                    return (
+                      <li key={step.id} className="ms-4 pt-5 pb-5">
+                        <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-black dark:border-gray-900 dark:bg-gray-700"></div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          {step.title}
+                        </h3>
+                        <p className="text-base font-normal text-gray-500 dark:text-gray-400">
+                          {step.description}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
+              {ques.details && (
+                <ol className="list-decimal pl-5">
+                  {ques.details.map((item) => {
+                    return (
+                      <li key={item.id} className="pt-5">
+                        <h1 className="text-md font-semibold">{item.title}</h1>
+                        {item.description &&
+                          item.description.map((line, index) => {
+                            return (
+                              <p key={index} className="pb-2">
+                                {line}
+                              </p>
+                            );
+                          })}
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
+              {ques.img && (
+                <Image
+                  src={ques.img}
+                  alt={`System flowchart`}
+                  width={800}
+                  height={300}
+                  className="p-5"
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

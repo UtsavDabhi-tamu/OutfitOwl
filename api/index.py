@@ -498,9 +498,6 @@ reverse_combined_categories = {
 }
 
 
-retries = 0
-
-
 @app.route("/api/store_preferences", methods=["POST"])
 def user_preferences():
     likedImages = request.json.get("likedImages")
@@ -531,7 +528,7 @@ def get_sim_image(category, profile="Basic"):
 
 
 # items_to_rec ex. ['Tee', 'Shorts']
-def run_vbpr(items_to_rec, profile="Basic"):
+def run_vbpr(items_to_rec, profile="Basic", topK=300):
     if profile not in profile_vbpr:
         profile = "Basic"
     vbpr_file_name = profile_vbpr[profile]
@@ -596,7 +593,7 @@ def run_vbpr(items_to_rec, profile="Basic"):
     scores = trainer.model.recommend(user_index, items_indices)
 
     # Extract and print top recommendations
-    top_scores, top_indices = torch.topk(scores.squeeze(), 80)
+    top_scores, top_indices = torch.topk(scores.squeeze(), topK)
 
     # Remove prefernce images from top indices
     top_indices = top_indices[top_indices != (features_with_query.size(0) - 1)]
@@ -644,23 +641,14 @@ def run_vbpr(items_to_rec, profile="Basic"):
     for index in top_indices:
         tensor_name = tensor_names[index]
         category = map_tensor_to_category(tensor_name)
-        if category and tensor_name.count("_") == 2:
-            category_lists[category].append(tensor_name)
+        category_lists[category].append(tensor_name)
 
     images_to_rec = []
 
     for i, category in enumerate(items_to_rec):
-        if not category in reverse_combined_categories:
-            if retries > 3:
-                retries = 0
-                images_to_rec.append("default.jpg")
-                continue
-            retries += 1
-            images_to_rec.append(run_vbpr([category], profile)[0])
-            continue
-
         if len(category_lists[reverse_combined_categories[category]]) == 0:
-            images_to_rec.append(category + "_0.jpg")
+            print("Rerunning VBPR with topK:", 400)
+            images_to_rec.append(run_vbpr([category], profile, 400)[0])
             continue
 
         tensor_specific_subset = []
@@ -673,23 +661,24 @@ def run_vbpr(items_to_rec, profile="Basic"):
                 tensor_general_subset.append(tensor_name)
 
         tensor_subset = (
-            len(tensor_specific_subset) > 0
-            and tensor_specific_subset
-            or tensor_general_subset
+            tensor_specific_subset
+            if len(tensor_specific_subset) > 0
+            else tensor_general_subset
         )
         # print("Specific Subset:", tensor_specific_subset)
         # print("General Subset:", tensor_general_subset)
         print("Tensor Subset:", tensor_subset)
-        image_name = random.choice(tensor_subset)[: -len("_features.pt")] + ".jpg"
-        images_to_rec.append(image_name)
+        image_name = (
+            random.choice(tensor_subset[: min(len(tensor_subset), 10)])[
+                : -len("_features.pt")
+            ]
+            + ".jpg"
+        )
+        image_path = "/images/wardrobe/" + image_name
+        if image_name.count("_") > 2:
+            image_path = "/images/preferences/" + image_name
 
-    # images_to_rec = {}
-
-    # for category in items_to_rec:
-    #     images_to_rec[category] = []
-    
-    #     for tensor_name in category_lists[reverse_combined_categories[category]]:
-    #         images_to_rec[category].append(tensor_name[: -len("_features.pt")] + ".jpg")
+        images_to_rec.append(image_path)
 
     return images_to_rec
 
@@ -795,23 +784,25 @@ def query_gpt(weather_data, clothing_prefs, plans):
                     Do not give optional articles unless absolutely necessary.
 
                     Feminine Options:
-                        Lower Body Options: Sweatpants, Skirt, Shorts, Leggings, Jeans, Cutoffs
+                        Lower Body Options: Sweatpants, Skirt, Shorts, Leggings, Pants, Cutoffs
                         Upper Body Options: Top, Tee, Sweater, Blouse
                         Optional Upper Body Outerwear: Coat, Jacket, Hoodie, Blazer
 
                     Masculine Options:
-                        Lower Body Options: Sweatpants, Shorts, Jeans
+                        Lower Body Options: Sweatpants, Shorts, Pants
                         Upper Body Options: Tee, Sweater
                         Optional Upper Body Outerwear: Coat, Jacket, Hoodie, Blazer
 
                     Format: "|<lower body article>|<upper body article>|<optional upper body outerwear>|"
-                    Example: |Shorts|Top|Jacket| or |Jeans|Tee||
+                    Example: |Shorts|Top|Jacket| or |Pants|Tee||
                 """,
             },
         ],
     )
 
     response = completion.choices[0].message.content
+    response = response.replace("Pants", "Jeans")
+    response = response.replace("Raincoat", "Coat")
     items_to_rec = [
         item.strip() for item in response.strip().split("|") if item.strip() != ""
     ]

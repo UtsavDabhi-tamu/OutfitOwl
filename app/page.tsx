@@ -52,9 +52,9 @@ export default function Home() {
       .then((response) => response.json())
       .then((outfit) => {
         console.log(outfit);
-        setLowerBodyArticle("/images/wardrobe/" + outfit[0]);
-        setUpperBodyArticle("/images/wardrobe/" + outfit[1]);
-        if (outfit.length > 2) setOuterArticle("/images/wardrobe/" + outfit[2]);
+        setLowerBodyArticle(outfit[0]);
+        setUpperBodyArticle(outfit[1]);
+        if (outfit.length > 2) setOuterArticle(outfit[2]);
         else setOuterArticle("");
       })
       .catch((err) => {
