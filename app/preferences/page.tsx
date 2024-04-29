@@ -148,8 +148,9 @@ export default function Preferences() {
   };
 
   const sendPreferences = () => {
-    // setProfileLikes((_prev) => {
-    //   let newProfileLikes = new Map(profileLikes);
+    // setProfileLikes((prev) => new Map<string, number[]>(prev).set(selectedProfile || "", likedImages));
+    // setProfileLikes((prev) => {
+    //   let newProfileLikes = prev;
     //   newProfileLikes.set(selectedProfile || "", likedImages);
     //   return newProfileLikes;
     // });

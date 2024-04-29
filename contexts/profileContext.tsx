@@ -26,17 +26,13 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   const [profiles, setProfiles] = useState<string[]>([
     "Basic",
     "Patterns",
-    "Sporty",
-    "Casual",
-    "Formal",
+    "Solid",
   ]);
   const [profileTypes, setProfileTypes] = useState<Map<string, string>>(
     new Map([
       ["Basic", "Masculine"],
       ["Patterns", "Feminine"],
-      ["Sporty", "Feminine"],
-      ["Casual", "Masculine"],
-      ["Formal", "Feminine"],
+      ["Solid", "Feminine"],
     ])
   );
   const [profileLikes, setProfileLikes] = useState<Map<string, number[]>>(
@@ -71,9 +67,21 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         ],
       ],
-      ["Sporty", Array(221).fill(0)],
-      ["Casual", Array(221).fill(0)],
-      ["Formal", Array(221).fill(0)],
+      [
+        "Solid",
+        [
+          1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+          1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0,
+          1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+          0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0,
+          0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ],
+      ],
     ])
   );
 
@@ -88,7 +96,8 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
         setProfileTypes,
         profileLikes,
         setProfileLikes,
-      }}>
+      }}
+    >
       {children}
     </ProfileContext.Provider>
   );

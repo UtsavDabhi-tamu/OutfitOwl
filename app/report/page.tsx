@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 const questions = [
   {
@@ -146,44 +147,52 @@ const questions = [
         id: 1,
         title: ``,
         description: [
-          `Vasileva et el proposed a method of learning fashion by developing pairwise projections for each fashion choice within existing outfits. Compatibility scores were computed for pairs of fashion items to determine which types of clothing would go well together. This would determine which types fashion items would work well in a full outfit.`,
+          <p>
+            Vasileva et al. proposed a method of learning fashion by developing
+            pairwise projections for each fashion choice within existing
+            outfits. Compatibility scores were computed for pairs of fashion
+            items to determine which types of clothing would go well together.
+            This would determine which types fashion items would work well in a
+            full outfit.{" "}
+            <Link target="_blank" href={"https://arxiv.org/pdf/1803.09196"}>
+              https://arxiv.org/pdf/1803.09196
+            </Link>
+          </p>,
         ],
       },
       {
         id: 2,
         title: ``,
         description: [
-          `Thao et al. developed a personalized fashion recommendation system that combines visual 
-          features from product images with textual information (e.g., descriptions, reviews). They 
-          used an attention mechanism to adaptively focus on relevant visual and textual features for 
-          each user's preferences.`,
+          <p>
+            He and Hu developed a two-step approach to fashion recommendation
+            with their FashionNet implementation that both used how well items
+            would match with each other as well as how much a user liked a
+            particular fashion item. He and Hu extracted features through a
+            VGGNet-based CNN model pre-trained on the ImageNet database before
+            applying them to a user-specific model for recommendations.{" "}
+            <Link target="_blank" href={"https://arxiv.org/pdf/1810.02443"}>
+              https://arxiv.org/pdf/1810.02443
+            </Link>
+          </p>,
         ],
       },
       {
         id: 3,
         title: ``,
         description: [
-          `Kang et al. proposed a fashion recommendation system that learns a joint visual-semantic 
-          embedding space. This allows the system to capture both visual and semantic similarities between 
-          clothing items, and recommend items based on their proximity in this embedding space.`,
-        ],
-      },
-      {
-        id: 4,
-        title: ``,
-        description: [
-          `Zhang et al. introduced a visual-aware collaborative filtering (VACF) approach for fashion 
-          recommendation. They used CNNs to extract visual features from clothing images and combined them 
-          with user-item interaction data in a collaborative filtering framework.`,
-        ],
-      },
-      {
-        id: 5,
-        title: ``,
-        description: [
-          `Tan et al. proposed a deep visual-semantics hashing approach that learns compact binary 
-          codes from both visual and textual data for efficient fashion recommendation. This enables fast 
-          retrieval of visually and semantically similar fashion items.`,
+          <p>
+            Kang et al. developed a visually aware recommendation system that
+            could take input and learn the preferred features of a user. This
+            was developed using the features extracted from a pre-trained CNN,
+            and could be used to develop a model that could understand a user's
+            fashion preferences. They developed and proposed a DVBPR
+            implementation that could develop new fashion items to be
+            recommended to the user.{" "}
+            <Link target="_blank" href={"https://arxiv.org/pdf/1711.02231"}>
+              https://arxiv.org/pdf/1711.02231
+            </Link>
+          </p>,
         ],
       },
     ],
@@ -204,12 +213,12 @@ export default function Report() {
         </p>
       </div>
 
-      <div className="w-3/4 bg-white mx-auto px-8 rounded-lg mb-8">
+      <div className="w-3/4 bg-white mx-auto px-12 rounded-lg mb-12">
         {/* Q&A */}
         {questions.map((ques) => {
           return (
             <div key={ques.id} className="py-12 mx-auto space-y-0">
-              <h2 className="text-xl font-semibold">{ques?.question}</h2>
+              <h2 className="text-xl font-semibold mb-2">{ques?.question}</h2>
               {ques.answer &&
                 ques.answer.map((line, index) => {
                   return (
