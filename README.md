@@ -31,7 +31,7 @@ sudo apt install git-lfs
 ```
 Troubleshoot - https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage
 
-If there are difficulties downloading the .pkl files through Git LFS, you can download them directly from Google Drive.
+If there are difficulties downloading the `.pkl` files through Git LFS, you can download them directly from Google Drive.
 
 [Basic.pkl](https://drive.google.com/file/d/1Co3XbMyFDaCSNZr27__y8rddVxYCRt9n/view?usp=share_link)<br>
 [Patterns.pkl](https://drive.google.com/file/d/1Cpm3ndRxyJxIsC31SxrNG4z1x-dyklJL/view?usp=share_link)<br>
@@ -39,7 +39,12 @@ If there are difficulties downloading the .pkl files through Git LFS, you can do
 [TensorCodex.pkl](https://drive.google.com/file/d/15Kdq7AV6_rIf8CUiN0H7EvHti7HEcjRf/view?usp=drive_link)<br>
 Move the `.pkl` files to `api/` directory
 
-# Step 4: Install Dependencies and Run the Application
+# Step 4: Download the API key file from Google Drive
+https://drive.google.com/file/d/1f1s0Ukxvh7RLIQYLprnThuvkBnz05cAX/view?usp=sharing
+
+Place the file `keys.py` in the main directory
+
+# Step 5: Install Dependencies and Run the Application
 ```bash
 npm i
 npm run build
