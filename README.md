@@ -1,5 +1,8 @@
-# Step 1: Install git-lfs
-Follow the steps provided here - [installing-git-large-file-storage](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage)
+# Step 1: Install Git LFS to download large pre-trained models file
+```bash
+sudo apt install git-lfs
+```
+Troubleshoot - https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage
 
 # Step 2: Install docker
 Follow the steps provided here - [docker-install](https://docs.docker.com/engine/install/)
